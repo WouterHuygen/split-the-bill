@@ -1,31 +1,41 @@
 package com.uantwerpen.Objects;
 
 public class GroupMember {
-    String name;
-    String email;
-    String belongsTo;
+    public String Name;
+    public String Email;
+    public String Group;
+    public int Saldo;
+
 
     public String getName() {
-        return name;
+        return Name;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setName(String Name) {
+        this.Name = Name;
     }
 
     public String getEmail() {
-        return email;
+        return Email;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setEmail(String Email) {
+        this.Email = Email;
     }
 
-    public String getBelongsTo() {
-        return belongsTo;
+    public String getGroup() {
+        return Group;
     }
 
-    public void setBelongsTo(String belongsTo) {
-        this.belongsTo = belongsTo;
+    public void setGroup(String Group) {
+        this.Group = Group;
+    }
+
+    public int getSaldo() {
+        return Saldo;
+    }
+
+    public void setSaldo(int Saldo) {
+        this.Saldo = Saldo;
     }
 }
