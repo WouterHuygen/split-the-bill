@@ -20,14 +20,15 @@ public class DbWriter {
         return conn;
     }
 
-    public void InsertMember(String name, String email, int groupId){
+    //Add new member to a paymentgroup
+    public void InsertMember(String name, String email, String groupId){
         String sqlQuery= "INSERT INTO GroupMembers(name, email, groupid, saldo) VALUES(?, ?, ?, 0)";
 
         try(Connection conn = this.connect();
             PreparedStatement pstmt = conn.prepareStatement(sqlQuery)) {
             pstmt.setString(1, name);
             pstmt.setString(2, email);
-            pstmt.setInt(3, groupId);
+            pstmt.setString(3, groupId);
             //pstmt.setInt(4, 0);
             pstmt.executeUpdate();
 
@@ -35,6 +36,8 @@ public class DbWriter {
             System.out.println(e.getMessage());
         }
     }
+
+    //Add new group to db
     public void InsertGroup(String name){
         String sqlQuery= "INSERT INTO PaymentGroups(name) VALUES(?)";
 
@@ -88,9 +91,7 @@ public class DbWriter {
         }
     }
 
-
-
-
+    //Get groupname based on ID
     public String GetPaymentGroupById(int groupId){
         String sqlQuery = "SELECT groupId, name FROM paymentgroups WHERE groupId == ?";
 
@@ -111,6 +112,25 @@ public class DbWriter {
         } catch (SQLException e) {
             System.out.println(e.getMessage());
             return null;
+        }
+    }
+
+    //Get groupID based on name
+    public int GetPaymentGroupById(String groupName){
+        String sqlQuery = "SELECT groupId FROM paymentgroups WHERE name == ?";
+
+        try (Connection conn = this.connect();
+             PreparedStatement pstmt  = conn.prepareStatement(sqlQuery)){
+
+            pstmt.setString(1, groupName);
+
+            ResultSet rs  = pstmt.executeQuery();
+            System.out.println("PaymentGroupID = " + rs.getInt("groupId"));
+
+            return rs.getInt("groupId");
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            return 0;
         }
     }
 }

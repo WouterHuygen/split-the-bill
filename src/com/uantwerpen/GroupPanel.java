@@ -8,6 +8,7 @@ import java.awt.event.*;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 
+import com.uantwerpen.Helpers.DbWriter;
 import com.uantwerpen.Objects.GroupMember;
 
 public class GroupPanel {
@@ -29,6 +30,7 @@ public class GroupPanel {
     private JTable memberList;
     public JFrame groupFrame;
 
+    public ArrayList<GroupMember> newGroupMembers;
 
     private static String[]  columnNames = {"Name", "Email", "Saldo"};
     public GroupMember arno = new GroupMember();
@@ -50,18 +52,11 @@ public class GroupPanel {
     }
 
     public GroupPanel() {
-        arno.Name = "Arno";
-        arno.Group = "Vakantie";
-        arno.Email = "Weyns.arno@gmail.com";
-        test.Name = "test";
-        test.Group = "Vakantie";
-        test.Email = "test.test@gmail.com";
-        memberSamples.add(arno);
-        memberSamples.add(test);
+        ArrayList<GroupMember> newMemberList = new ArrayList<>();
 
         DefaultTableModel tableModel = new DefaultTableModel(columnNames, 0);
         memberList = new JTable(tableModel);
-        Object[] data = {"arno.Name", "arno", "arno.Email"};
+        Object[] data = {memberNameTb.getText().trim(), memberEmailTb.getText().trim(), groupNameTb.getText().trim()};
         tableModel.addRow(data);
 
         addMemberButton.addActionListener(new ActionListener() {
@@ -72,12 +67,10 @@ public class GroupPanel {
                 newMember.Email = memberEmailTb.getText().trim();
                 newMember.Group = groupNameTb.getText().trim();
 
-                if (numberOfMembers == 0){
-                   // arrayListOfMembers.add(newMember);
-                }
                 if (newMember.Name != null & newMember.Email != null) {
                     //memberTa.append(newMember + "\n");
                     tableModel.addRow(data);
+                    newMemberList.add(newMember);
 
                     numberOfMembers++;
                     memberNameTb.setText(null);
@@ -100,7 +93,11 @@ public class GroupPanel {
         createGroupBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-
+                DbWriter dbWriter = new DbWriter();
+                for (int i = 0; i < newMemberList.size(); i++) {
+                    GroupMember userToAdd = newMemberList.get(i);
+                    dbWriter.InsertMember(userToAdd.Name, userToAdd.Email, userToAdd.Group);
+                }
             }
         });
     }

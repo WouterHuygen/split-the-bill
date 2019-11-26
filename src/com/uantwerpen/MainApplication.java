@@ -24,12 +24,12 @@ public class MainApplication {
         mainFrame.pack();
         mainFrame.setVisible(true);
 
+        new MainApplication().DisplayGroups();
     }
 
     public void DisplayGroups(){
         System.out.println("displaying groups");
-        //PaymentGroup haha = new PaymentGroup(1,"arno", false);
-        //paymentgroupsTbl.setModel(haha);
+
         DbWriter app = new DbWriter();
 
         ArrayList<PaymentGroup> list = app.GetAllPaymentGroupsB();
@@ -46,27 +46,18 @@ public class MainApplication {
             row[0]=list.get(i).getPaymentGroupId();
             row[1]=list.get(i).getName();
             model.addRow(row);
-
         }
 
         paymentgroupsTbl.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         paymentgroupsTbl.getColumnModel().getColumn(0).setMaxWidth(100);
-
     }
 
     public MainApplication() {
         makeGrpBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                DbWriter app = new DbWriter();
-                DisplayGroups();
-/*                DbWriter app = new DbWriter();
-                app.InsertGroup("Arno");
-                app.GetAllPaymentGroups();
-                app.GetPaymentGroupById(2);*/
-
-                /*GroupPanel gp = new GroupPanel();
-                gp.NewScreen();*/
+                GroupPanel gp = new GroupPanel();
+                gp.NewScreen();
             }
         });
     }
