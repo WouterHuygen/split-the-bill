@@ -44,7 +44,7 @@ public class MainApplication {
         Object[] row = new Object[2];
         for (int i=0; i<list.size(); i++){
             row[0]=list.get(i).getPaymentGroupId();
-            row[1]=list.get(i).getName();
+            row[1]=list.get(i).getPaymentGroupName();
             model.addRow(row);
         }
 

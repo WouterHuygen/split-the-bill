@@ -1,24 +1,22 @@
 package com.uantwerpen.Objects;
 
-import java.util.ArrayList;
-
 public class PaymentGroup {
     //ArrayList<GroupMember> Members;
-    private int PaymentGroupId;
-    private String Name;
+    private int paymentGroupId;
+    private String paymentGroupName;
     boolean IsSettled;
 
     public int getPaymentGroupId() {
-        return PaymentGroupId;
+        return paymentGroupId;
     }
 
-    public String getName() {
-        return Name;
+    public String getPaymentGroupName() {
+        return paymentGroupName;
     }
 
-    public PaymentGroup(int paymentGroupId, String name, boolean isSettled){
+    public PaymentGroup(int paymentGroupId, String paymentGroupName, boolean isSettled){
         this.IsSettled = isSettled;
-        this.Name = name;
-        this.PaymentGroupId = paymentGroupId;
+        this.paymentGroupName = paymentGroupName;
+        this.paymentGroupId = paymentGroupId;
     }
 }
