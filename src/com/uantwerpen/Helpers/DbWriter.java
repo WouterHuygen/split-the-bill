@@ -8,7 +8,7 @@ import java.sql.*;
 import java.util.ArrayList;
 
 public class DbWriter {
-    public static String sqlUrl = "jdbc:sqlite:splitthebill.db";
+    public static String sqlUrl = "jdbc:sqlite:C:\\sqlite\\splitthebill.db";
 
     private Connection connect(){
         Connection conn = null;
@@ -82,7 +82,7 @@ public class DbWriter {
             while (rs.next()){
                 paymentGroup = new PaymentGroup(rs.getInt("groupId"), rs.getString("name"), false);
                 paymentgroupsList.add(paymentGroup);
-                System.out.println(rs.getInt("groupId") + "\t" + rs.getString("name"));
+                //System.out.println(rs.getInt("groupId") + "\t" + rs.getString("name"));
             }
             return paymentgroupsList;
         }catch(SQLException e){

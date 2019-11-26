@@ -85,7 +85,7 @@ public class GroupPanel {
                 super.focusGained(e);
                 String defaultText = "Enter a group";
                 if (groupNameTb.getText().contains(defaultText)){
-                    groupNameTb.setText(null);
+                    //groupNameTb.setText(null);
                 }
             }
         });
@@ -113,6 +113,27 @@ public class GroupPanel {
                     groupFrame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
                     groupFrame.pack();
                     groupFrame.setVisible(true);
+
+                } catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
+    public void OpenPaymentGroup(String groupName){
+        EventQueue.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    GroupPanel nw = new GroupPanel();
+                    JFrame groupFrame = new JFrame("GroupFrame");
+                    groupFrame.setContentPane(nw.createGroupPanel);
+                    groupFrame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+                    groupFrame.pack();
+                    groupFrame.setVisible(true);
+
+                    nw.groupNameTb.setText(groupName);
 
                 } catch (Exception e){
                     e.printStackTrace();

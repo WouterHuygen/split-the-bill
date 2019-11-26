@@ -2,8 +2,11 @@ package com.uantwerpen;
 
 import com.uantwerpen.Helpers.DbWriter;
 import com.uantwerpen.Objects.PaymentGroup;
+import javafx.scene.Group;
 
 import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -17,23 +20,24 @@ public class MainApplication {
     private JTextArea paymentGroupTa;
 
     public static void main(String[] args) {
+        MainApplication nw = new MainApplication();
 
         JFrame mainFrame = new JFrame("MainApplication");
-        mainFrame.setContentPane(new MainApplication().mainPanel);
+        mainFrame.setContentPane(nw.mainPanel);
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         mainFrame.pack();
         mainFrame.setVisible(true);
 
-        new MainApplication().DisplayGroups();
+        new MainApplication().DisplayGroups(nw.paymentgroupsTbl);
     }
 
-    public void DisplayGroups(){
+    public void DisplayGroups(JTable mainTable){
         System.out.println("displaying groups");
 
         DbWriter app = new DbWriter();
 
         ArrayList<PaymentGroup> list = app.GetAllPaymentGroupsB();
-        DefaultTableModel model = (DefaultTableModel) paymentgroupsTbl.getModel();
+        DefaultTableModel model = (DefaultTableModel) mainTable.getModel();
         model.addColumn("<html><b>GroupId</b></html>");
         model.addColumn("<html><b>Group Name</b></html>");
         Object[] headerRow = new Object[2];
@@ -48,8 +52,8 @@ public class MainApplication {
             model.addRow(row);
         }
 
-        paymentgroupsTbl.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-        paymentgroupsTbl.getColumnModel().getColumn(0).setMaxWidth(100);
+        mainTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        mainTable.getColumnModel().getColumn(0).setMaxWidth(100);
     }
 
     public MainApplication() {
@@ -57,9 +61,20 @@ public class MainApplication {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 DbWriter dbWriter = new DbWriter();
-                DisplayGroups();
-/*                GroupPanel gp = new GroupPanel();
-                gp.NewScreen();*/
+                //DisplayGroups();
+            }
+        });
+
+        paymentgroupsTbl.getSelectionModel().addListSelectionListener(new ListSelectionListener(){
+            public void valueChanged(ListSelectionEvent event) {
+                DbWriter dbWriter = new DbWriter();
+
+                if(!event.getValueIsAdjusting()) {
+                    int groupId = (int) paymentgroupsTbl.getValueAt(paymentgroupsTbl.getSelectedRow(), 0);
+
+                    GroupPanel gp = new GroupPanel();
+                    gp.OpenPaymentGroup(dbWriter.GetPaymentGroupById(groupId));
+                }
             }
         });
     }
