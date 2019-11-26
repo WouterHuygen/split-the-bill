@@ -8,7 +8,7 @@ import java.sql.*;
 import java.util.ArrayList;
 
 public class DbWriter {
-    public static String sqlUrl = "jdbc:sqlite:C:\\sqlite\\db\\splitit.db";
+    public static String sqlUrl = "jdbc:sqlite:splitthebill.db";
 
     private Connection connect(){
         Connection conn = null;
