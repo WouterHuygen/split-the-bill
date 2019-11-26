@@ -116,7 +116,7 @@ public class DbWriter {
     }
 
     //Get groupID based on name
-    public int GetPaymentGroupById(String groupName){
+    public int GetPaymentGroupIdByName(String groupName){
         String sqlQuery = "SELECT groupId FROM paymentgroups WHERE name == ?";
 
         try (Connection conn = this.connect();

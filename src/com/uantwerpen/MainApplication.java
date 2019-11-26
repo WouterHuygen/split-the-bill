@@ -56,8 +56,10 @@ public class MainApplication {
         makeGrpBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                GroupPanel gp = new GroupPanel();
-                gp.NewScreen();
+                DbWriter dbWriter = new DbWriter();
+                DisplayGroups();
+/*                GroupPanel gp = new GroupPanel();
+                gp.NewScreen();*/
             }
         });
     }
