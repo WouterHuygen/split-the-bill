@@ -13,7 +13,7 @@ public class DbWriter {
     Connection conn = null;
 
     public DbWriter() {
-        InitializeDatabase();
+        //InitializeDatabase();
     }
 
     private Connection connect(){
@@ -58,14 +58,14 @@ public class DbWriter {
 
     //Returns all groups
     public String GetAllPaymentGroups(){
-        String sqlQuery= "SELECT groupId, name FROM PAYMENTGROUPS";
+        String sqlQuery= "SELECT groupId, groupname FROM PAYMENTGROUPS";
         String result = "";
         try(Connection conn = this.connect();
             Statement stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery(sqlQuery)){
                 while (rs.next()){
-                    result += rs.getString("name") + "\n";
-                    System.out.println(rs.getInt("groupId") + "\t" + rs.getString("name"));
+                    result += rs.getString("groupname") + "\n";
+                    System.out.println(rs.getInt("groupId") + "\t" + rs.getString("groupname"));
                 }
                 return result;
         }catch(SQLException e){
@@ -85,7 +85,7 @@ public class DbWriter {
 
             PaymentGroup paymentGroup;
             while (rs.next()){
-                paymentGroup = new PaymentGroup(rs.getInt("groupId"), rs.getString("name"), false);
+                paymentGroup = new PaymentGroup(rs.getInt("groupId"), rs.getString("groupname"), false);
                 paymentgroupsList.add(paymentGroup);
                 //System.out.println(rs.getInt("groupId") + "\t" + rs.getString("name"));
             }
@@ -98,7 +98,7 @@ public class DbWriter {
 
     //Get groupname based on ID
     public String GetPaymentGroupById(int groupId){
-        String sqlQuery = "SELECT groupId, name FROM PAYMENTGROUPS WHERE groupId == ?";
+        String sqlQuery = "SELECT groupId, groupname FROM PAYMENTGROUPS WHERE groupId == ?";
 
         try (Connection conn = this.connect();
              PreparedStatement pstmt  = conn.prepareStatement(sqlQuery)){
@@ -106,14 +106,14 @@ public class DbWriter {
             pstmt.setDouble(1,groupId);
 
             ResultSet rs  = pstmt.executeQuery();
-            System.out.println("PaymentGroup = " + rs.getString("name"));
+            System.out.println("PaymentGroup = " + rs.getString("groupname"));
 /*            // loop through the result set
             while (rs.next()) {
                 System.out.println(rs.getInt("id") +  "\t" +
                         rs.getString("name") + "\t" +
                         rs.getDouble("capacity"));
             }*/
-            return rs.getString("name");
+            return rs.getString("groupname");
         } catch (SQLException e) {
             System.out.println(e.getMessage());
             return null;
@@ -122,7 +122,7 @@ public class DbWriter {
 
     //Get groupID based on name
     public int GetPaymentGroupIdByName(String groupName){
-        String sqlQuery = "SELECT groupId FROM PAYMENTGROUPS WHERE name == ?";
+        String sqlQuery = "SELECT groupId FROM PAYMENTGROUPS WHERE groupname == ?";
 
         try (Connection conn = this.connect();
              PreparedStatement pstmt  = conn.prepareStatement(sqlQuery)){
@@ -150,7 +150,6 @@ public class DbWriter {
                 " ISSETTLED            INTEGER     NOT NULL)";;
         try(Connection conn = this.connect();
             PreparedStatement pstmt = conn.prepareStatement(sqlQuery)) {
-
             pstmt.executeUpdate();
 
         } catch (SQLException e) {

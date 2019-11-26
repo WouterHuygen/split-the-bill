@@ -17,7 +17,6 @@ public class MainApplication {
     private JPanel mainPanel;
     private JLabel titleLabel;
     private JTable paymentgroupsTbl;
-    private JTextArea paymentGroupTa;
 
     public static void main(String[] args) {
         MainApplication nw = new MainApplication();
@@ -70,10 +69,15 @@ public class MainApplication {
                 DbWriter dbWriter = new DbWriter();
 
                 if(!event.getValueIsAdjusting()) {
-                    int groupId = (int) paymentgroupsTbl.getValueAt(paymentgroupsTbl.getSelectedRow(), 0);
+                    try {
+                        int groupId = (int) paymentgroupsTbl.getValueAt(paymentgroupsTbl.getSelectedRow(), 0);
 
-                    GroupPanel gp = new GroupPanel();
-                    gp.OpenPaymentGroup(dbWriter.GetPaymentGroupById(groupId));
+                        GroupPanel gp = new GroupPanel();
+                        gp.OpenPaymentGroup(dbWriter.GetPaymentGroupById(groupId));
+                    }catch (Exception e){
+                        System.out.println("error = " + e);
+                    }
+
                 }
             }
         });

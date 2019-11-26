@@ -4,6 +4,16 @@ public class GroupMember {
     public String Name;
     public String Email;
     public String Group;
+
+    public int getGroupId() {
+        return GroupId;
+    }
+
+    public void setGroupId(int groupId) {
+        GroupId = groupId;
+    }
+
+    public int GroupId;
     public int Saldo;
 
 
