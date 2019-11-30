@@ -10,7 +10,7 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 public class MainApplication {
-    private JButton makeGrpBtn;
+    private JButton addPaymentGroupBtn;
     private JPanel mainPanel;
     private JLabel titleLabel;
     private JTable paymentgroupsTbl;
@@ -24,10 +24,10 @@ public class MainApplication {
         mainFrame.pack();
         mainFrame.setVisible(true);
 
-        new MainApplication().DisplayGroups();
+        new MainApplication().DisplayExistingGroups();
     }
 
-    public void DisplayGroups(){
+    public void DisplayExistingGroups(){
         System.out.println("displaying groups");
 
         DbWriter app = new DbWriter();
@@ -53,11 +53,11 @@ public class MainApplication {
     }
 
     public MainApplication() {
-        makeGrpBtn.addActionListener(new ActionListener() {
+        addPaymentGroupBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                DbWriter dbWriter = new DbWriter();
-                DisplayGroups();
+                //DbWriter dbWriter = new DbWriter();
+                DisplayExistingGroups();
 /*                GroupPanel gp = new GroupPanel();
                 gp.NewScreen();*/
             }
