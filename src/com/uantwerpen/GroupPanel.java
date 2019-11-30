@@ -1,15 +1,14 @@
 package com.uantwerpen;
 
 import javax.swing.*;
-import javax.swing.event.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 
 import com.uantwerpen.Helpers.DbWriter;
 import com.uantwerpen.Objects.GroupMember;
+import com.uantwerpen.Objects.PaymentGroup;
 
 public class GroupPanel {
     private JLabel titleLabel;
@@ -27,20 +26,16 @@ public class GroupPanel {
     private JButton addMemberButton;
     private JTextField memberNameTb;
     private JTextField memberEmailTb;
-    private JTable memberList;
+    private JTable memberListTbl;
     public JFrame groupFrame;
+    private JPanel createGroupPanel;
 
-    public ArrayList<GroupMember> newGroupMembers;
 
     private static String[]  columnNames = {"Name", "Email", "Saldo"};
-    public GroupMember arno = new GroupMember();
-    public GroupMember test = new GroupMember();
 
     public ArrayList<GroupMember> memberSamples = new ArrayList<GroupMember>();
 
-
-    private int numberOfMembers = 0;
-    public JPanel createGroupPanel;
+    private JLabel groupIdLbl;
 
     public void main(String[] args) {
         JFrame groupFrame = new JFrame("createGroupPanel");
@@ -52,12 +47,15 @@ public class GroupPanel {
     }
 
     public GroupPanel() {
-        ArrayList<GroupMember> newMemberList = new ArrayList<>();
+        //model = (DefaultTableModel)memberListTbl.getModel();
+        DbWriter dbWriter = new DbWriter();
+
+        /*ArrayList<GroupMember> newMemberList = new ArrayList<>();
 
         DefaultTableModel tableModel = new DefaultTableModel(columnNames, 0);
-        memberList = new JTable(tableModel);
+        memberListTbl = new JTable(tableModel);
         Object[] data = {memberNameTb.getText().trim(), memberEmailTb.getText().trim(), groupNameTb.getText().trim()};
-        tableModel.addRow(data);
+        tableModel.addRow(data);*/
 
         addMemberButton.addActionListener(new ActionListener() {
             @Override
@@ -66,13 +64,11 @@ public class GroupPanel {
                 newMember.Name = memberNameTb.getText().trim();
                 newMember.Email = memberEmailTb.getText().trim();
                 newMember.Group = groupNameTb.getText().trim();
+                newMember.setGroupId(Integer.parseInt(groupIdLbl.getText()));
 
                 if (newMember.Name != null & newMember.Email != null) {
-                    //memberTa.append(newMember + "\n");
-                    tableModel.addRow(data);
-                    newMemberList.add(newMember);
+                    dbWriter.InsertMember(newMember);
 
-                    numberOfMembers++;
                     memberNameTb.setText(null);
                     memberEmailTb.setText(null);
                 }
@@ -94,9 +90,9 @@ public class GroupPanel {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 DbWriter dbWriter = new DbWriter();
-                for (int i = 0; i < newMemberList.size(); i++) {
-                    GroupMember userToAdd = newMemberList.get(i);
-                    dbWriter.InsertMember(userToAdd.Name, userToAdd.Email, userToAdd.Group);
+                  for (int i = 0; i < memberSamples.size(); i++) {
+                    GroupMember userToAdd = memberSamples.get(i);
+                    //dbWriter.InsertMember();
                 }
             }
         });
@@ -121,19 +117,48 @@ public class GroupPanel {
         });
     }
 
-    public void OpenPaymentGroup(String groupName){
+    public void OpenPaymentGroup(int groupId){
         EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
                 try {
+                    /*DbWriter dbWriter = new DbWriter();
                     GroupPanel nw = new GroupPanel();
-                    JFrame groupFrame = new JFrame("GroupFrame");
+                    JFrame groupFrame = new JFrame("GroupPanel");
                     groupFrame.setContentPane(nw.createGroupPanel);
                     groupFrame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
                     groupFrame.pack();
                     groupFrame.setVisible(true);
 
-                    nw.groupNameTb.setText(groupName);
+                    nw.groupNameTb.setText(dbWriter.GetPaymentGroupById(groupId));
+                    nw.groupIdLbl.setText(String.valueOf(groupId));
+
+                    memberSamples = dbWriter.GetMembersByGroupId(groupId);
+                    DefaultTableModel model = (DefaultTableModel) nw.memberListTbl.getModel();
+
+                    model.setColumnIdentifiers(columnNames);
+
+                    Object[] headerRow = new Object[3];
+                    headerRow[0]="<html><b>Name</b></html>";
+                    headerRow[1]="<html><b>Email</b></html>";
+                    headerRow[2]="<html><b>Saldo</b></html>";
+                    model.addRow(headerRow);*/
+
+                    Object[] row = new Object[3];
+                    for (int i=0; i<memberSamples.size(); i++){
+                        row[0]=memberSamples.get(i).getName();
+                        row[1]=memberSamples.get(i).getEmail();
+                        row[2]="€ " + memberSamples.get(i).getSaldo();
+
+                        model.addRow(row);
+                    }
+
+                    nw.memberListTbl.setShowVerticalLines(false);
+                    nw.memberListTbl.setRowHeight(32);
+                    nw.memberListTbl.getColumnModel().getColumn(1).setPreferredWidth(250);
+                    nw.groupNameTb.setEditable(false);
+                    nw.groupNameTb.setBackground(Color.white);
+                    nw.titleLabel.setVisible(false);
 
                 } catch (Exception e){
                     e.printStackTrace();
@@ -141,8 +166,6 @@ public class GroupPanel {
             }
         });
     }
-
-
 }
 
 

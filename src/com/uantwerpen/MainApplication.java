@@ -31,14 +31,12 @@ public class MainApplication {
     }
 
     public void DisplayGroups(JTable mainTable){
-        System.out.println("displaying groups");
-
         DbWriter app = new DbWriter();
 
         ArrayList<PaymentGroup> list = app.GetAllPaymentGroupsB();
         DefaultTableModel model = (DefaultTableModel) mainTable.getModel();
-        model.addColumn("<html><b>GroupId</b></html>");
-        model.addColumn("<html><b>Group Name</b></html>");
+        model.addColumn("GroupId");
+        model.addColumn("GroupName");
         Object[] headerRow = new Object[2];
         headerRow[0]="<html><b>GroupId</b></html>";
         headerRow[1]="<html><b>Paymentgroup name</b></html>";
@@ -53,6 +51,7 @@ public class MainApplication {
 
         mainTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         mainTable.getColumnModel().getColumn(0).setMaxWidth(100);
+        mainTable.setShowVerticalLines(false);
     }
 
     public MainApplication() {
@@ -60,7 +59,6 @@ public class MainApplication {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 DbWriter dbWriter = new DbWriter();
-                //DisplayGroups();
             }
         });
 
@@ -68,12 +66,12 @@ public class MainApplication {
             public void valueChanged(ListSelectionEvent event) {
                 DbWriter dbWriter = new DbWriter();
 
-                if(!event.getValueIsAdjusting()) {
+                if(!event.getValueIsAdjusting() && paymentgroupsTbl.getSelectedRow() != 0) {
                     try {
                         int groupId = (int) paymentgroupsTbl.getValueAt(paymentgroupsTbl.getSelectedRow(), 0);
-
                         GroupPanel gp = new GroupPanel();
-                        gp.OpenPaymentGroup(dbWriter.GetPaymentGroupById(groupId));
+                        gp.OpenPaymentGroup(groupId);
+
                     }catch (Exception e){
                         System.out.println("error = " + e);
                     }

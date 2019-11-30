@@ -1,13 +1,17 @@
 package com.uantwerpen.Helpers;
 
+import com.uantwerpen.GroupPanel;
 import com.uantwerpen.MainApplication;
+import com.uantwerpen.Objects.GroupMember;
 import com.uantwerpen.Objects.PaymentGroup;
 
 import javax.swing.table.DefaultTableModel;
 import java.sql.*;
 import java.util.ArrayList;
 
+
 public class DbWriter {
+    public int newGroupId;
 
     public static String sqlUrl = "jdbc:sqlite:splitthebill.db";
     Connection conn = null;
@@ -26,19 +30,50 @@ public class DbWriter {
     }
 
     //Add new member to a paymentgroup
-    public void InsertMember(String name, String email, String groupId){
+    //public void InsertMember(String name, String email, int groupId){
+    public void InsertMember(GroupMember memberToAdd){
         String sqlQuery= "INSERT INTO GROUPMEMBERS(name, email, groupid, saldo) VALUES(?, ?, ?, 0)";
 
         try(Connection conn = this.connect();
             PreparedStatement pstmt = conn.prepareStatement(sqlQuery)) {
-            pstmt.setString(1, name);
-            pstmt.setString(2, email);
-            pstmt.setString(3, groupId);
-            //pstmt.setInt(4, 0);
+            pstmt.setString(1, memberToAdd.Name);
+            pstmt.setString(2, memberToAdd.Email);
+            pstmt.setInt(3, memberToAdd.GroupId);
             pstmt.executeUpdate();
+
+            System.out.println("name = " + memberToAdd.Name + ", is added to group" + memberToAdd.GroupId);
 
         } catch (SQLException e) {
             System.out.println(e.getMessage());
+        }
+
+    }
+
+    //Get members from a groupID
+    public ArrayList<GroupMember> GetMembersByGroupId(int groupId){
+        String sqlQuery= "SELECT memberId, name, groupid, saldo, email FROM GROUPMEMBERS WHERE groupid == ?";
+        String result = "";
+        ArrayList<GroupMember> groupMembers = new ArrayList<>();
+        try (Connection conn = this.connect();
+             PreparedStatement pstmt  = conn.prepareStatement(sqlQuery)){
+
+            pstmt.setInt(1, groupId);
+
+
+            ResultSet rs  = pstmt.executeQuery();
+            while (rs.next()){
+                GroupMember groupMember = new GroupMember();
+                groupMember.Name = rs.getString("name");
+                groupMember.Saldo = rs.getInt("saldo");
+                groupMember.GroupId = rs.getInt("groupId");
+                groupMember.Email = rs.getString("email");
+
+                groupMembers.add(groupMember);
+            }
+            return groupMembers;
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            return null;
         }
     }
 
@@ -87,7 +122,6 @@ public class DbWriter {
             while (rs.next()){
                 paymentGroup = new PaymentGroup(rs.getInt("groupId"), rs.getString("groupname"), false);
                 paymentgroupsList.add(paymentGroup);
-                //System.out.println(rs.getInt("groupId") + "\t" + rs.getString("name"));
             }
             return paymentgroupsList;
         }catch(SQLException e){
