@@ -4,6 +4,14 @@ public class GroupMember {
     public String Name;
     public String Email;
     public String Group;
+    public int GroupId;
+    public int Saldo;
+
+    public GroupMember(String name, String email, int groupId, int saldo) {
+        Name = name;
+        Email = email;
+        GroupId = groupId;
+    }
 
     public int getGroupId() {
         return GroupId;
@@ -12,10 +20,6 @@ public class GroupMember {
     public void setGroupId(int groupId) {
         GroupId = groupId;
     }
-
-    public int GroupId;
-    public int Saldo;
-
 
     public String getName() {
         return Name;

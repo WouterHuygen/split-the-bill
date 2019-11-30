@@ -55,19 +55,13 @@ public class DbWriter {
         String result = "";
         ArrayList<GroupMember> groupMembers = new ArrayList<>();
         try (Connection conn = this.connect();
-             PreparedStatement pstmt  = conn.prepareStatement(sqlQuery)){
+            PreparedStatement pstmt  = conn.prepareStatement(sqlQuery)){
 
             pstmt.setInt(1, groupId);
 
-
             ResultSet rs  = pstmt.executeQuery();
             while (rs.next()){
-                GroupMember groupMember = new GroupMember();
-                groupMember.Name = rs.getString("name");
-                groupMember.Saldo = rs.getInt("saldo");
-                groupMember.GroupId = rs.getInt("groupId");
-                groupMember.Email = rs.getString("email");
-
+                GroupMember groupMember = new GroupMember(rs.getString("name"), rs.getString("email"),rs.getInt("groupId"), 0);
                 groupMembers.add(groupMember);
             }
             return groupMembers;
@@ -79,7 +73,7 @@ public class DbWriter {
 
     //Add new group to db
     public void InsertGroup(String name){
-        String sqlQuery= "INSERT INTO PAYMENTGROUPS(name) VALUES(?)";
+        String sqlQuery= "INSERT INTO PAYMENTGROUPS(groupname, issettled) VALUES(?, 0)";
 
         try(Connection conn = this.connect();
             PreparedStatement pstmt = conn.prepareStatement(sqlQuery)) {
@@ -141,13 +135,8 @@ public class DbWriter {
 
             ResultSet rs  = pstmt.executeQuery();
             System.out.println("PaymentGroup = " + rs.getString("groupname"));
-/*            // loop through the result set
-            while (rs.next()) {
-                System.out.println(rs.getInt("id") +  "\t" +
-                        rs.getString("name") + "\t" +
-                        rs.getDouble("capacity"));
-            }*/
             return rs.getString("groupname");
+
         } catch (SQLException e) {
             System.out.println(e.getMessage());
             return null;

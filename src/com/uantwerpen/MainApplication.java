@@ -16,18 +16,22 @@ public class MainApplication {
     private JButton makeGrpBtn;
     private JPanel mainPanel;
     private JLabel titleLabel;
-    private JTable paymentgroupsTbl;
+    public JTable paymentgroupsTbl;
+
+    public JFrame mainFrame;
 
     public static void main(String[] args) {
+        new MainApplication().MakeFrame();
+    }
+    public void MakeFrame(){
         MainApplication nw = new MainApplication();
-
-        JFrame mainFrame = new JFrame("MainApplication");
+        mainFrame = new JFrame("MainApplication");
         mainFrame.setContentPane(nw.mainPanel);
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         mainFrame.pack();
         mainFrame.setVisible(true);
 
-        new MainApplication().DisplayGroups(nw.paymentgroupsTbl);
+        nw.DisplayGroups(nw.paymentgroupsTbl);
     }
 
     public void DisplayGroups(JTable mainTable){
@@ -55,17 +59,17 @@ public class MainApplication {
     }
 
     public MainApplication() {
+
         makeGrpBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                DbWriter dbWriter = new DbWriter();
+                GroupPanel gp = new GroupPanel();
+                gp.NewScreen();
             }
         });
 
         paymentgroupsTbl.getSelectionModel().addListSelectionListener(new ListSelectionListener(){
             public void valueChanged(ListSelectionEvent event) {
-                DbWriter dbWriter = new DbWriter();
-
                 if(!event.getValueIsAdjusting() && paymentgroupsTbl.getSelectedRow() != 0) {
                     try {
                         int groupId = (int) paymentgroupsTbl.getValueAt(paymentgroupsTbl.getSelectedRow(), 0);
