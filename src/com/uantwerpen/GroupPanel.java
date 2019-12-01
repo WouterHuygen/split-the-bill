@@ -57,7 +57,6 @@ public class GroupPanel {
         this.memberListTbl.getColumnModel().getColumn(1).setPreferredWidth(350);
         this.memberListTbl.getColumnModel().getColumn(2).setPreferredWidth(150);
 
-
         addMemberButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {

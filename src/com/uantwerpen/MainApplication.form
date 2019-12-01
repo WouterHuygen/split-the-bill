@@ -41,6 +41,12 @@
         <properties>
           <autoResizeMode value="0"/>
           <cellSelectionEnabled value="false"/>
+          <font name="Consolas" size="18"/>
+          <intercellSpacing width="1" height="8"/>
+          <opaque value="true"/>
+          <rowHeight value="32"/>
+          <rowMargin value="8"/>
+          <showVerticalLines value="true"/>
         </properties>
       </component>
     </children>

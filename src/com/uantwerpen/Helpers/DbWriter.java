@@ -17,7 +17,7 @@ public class DbWriter {
     Connection conn = null;
 
     public DbWriter() {
-        //InitializeDatabase();
+        InitializeDatabase();
     }
 
     private Connection connect(){
@@ -114,7 +114,7 @@ public class DbWriter {
 
             PaymentGroup paymentGroup;
             while (rs.next()){
-                paymentGroup = new PaymentGroup(rs.getInt("groupId"), rs.getString("groupname"), false);
+                paymentGroup = new PaymentGroup(rs.getInt("groupId"), rs.getString("groupname"), rs.getBoolean("issettled"));
                 paymentgroupsList.add(paymentGroup);
             }
             return paymentgroupsList;
@@ -165,12 +165,29 @@ public class DbWriter {
     // Initializes and opens the database
     private void InitializeDatabase(){
         InitializePaymentGroupTable();
+        InitializeGroupMembersTable();
     }
     private void InitializePaymentGroupTable(){
         String sqlQuery = "CREATE TABLE if NOT EXISTS PAYMENTGROUPS"+
-                "(GROUPID INT PRIMARY KEY     NOT NULL," +
-                " GROUPNAME           CHAR(50)    NOT NULL," +
-                " ISSETTLED            INTEGER     NOT NULL)";;
+                "(GROUPID INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL," +
+                " GROUPNAME CHAR(50) NOT NULL," +
+                " ISSETTLED INTEGER NOT NULL);";
+        try(Connection conn = this.connect();
+            PreparedStatement pstmt = conn.prepareStatement(sqlQuery)) {
+            pstmt.executeUpdate();
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private void InitializeGroupMembersTable(){
+        String sqlQuery = "CREATE TABLE if NOT EXISTS GROUPMEMBERS"+
+                "(MEMBERID INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL," +
+                " NAME CHAR(50)    NOT NULL," +
+                " EMAIL CHAR(50)    NOT NULL," +
+                " GROUPID INTEGER    NOT NULL," +
+                " SALDO INTEGER NOT NULL);";
         try(Connection conn = this.connect();
             PreparedStatement pstmt = conn.prepareStatement(sqlQuery)) {
             pstmt.executeUpdate();
