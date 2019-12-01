@@ -38,7 +38,18 @@
         <properties>
           <autoResizeMode value="0"/>
           <cellSelectionEnabled value="false"/>
+          <enabled value="true"/>
+          <font name="Consolas" size="18"/>
+          <intercellSpacing width="1" height="8"/>
+          <opaque value="true"/>
+          <rowHeight value="32"/>
+          <rowMargin value="8"/>
+          <showVerticalLines value="true"/>
         </properties>
+        <clientProperties>
+          <JTable.autoStartsEdit class="java.lang.Boolean" value="true"/>
+          <terminateEditOnFocusLost class="java.lang.Boolean" value="false"/>
+        </clientProperties>
       </component>
       <vspacer id="458d1">
         <constraints>

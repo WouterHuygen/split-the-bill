@@ -14,6 +14,14 @@ public class PaymentGroup {
         return paymentGroupName;
     }
 
+    public boolean isSettled() {
+        return IsSettled;
+    }
+
+    public void setSettled(boolean settled) {
+        IsSettled = settled;
+    }
+
     public PaymentGroup(int paymentGroupId, String paymentGroupName, boolean isSettled){
         this.IsSettled = isSettled;
         this.paymentGroupName = paymentGroupName;
