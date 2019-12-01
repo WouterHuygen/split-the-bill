@@ -2,14 +2,13 @@ package com.uantwerpen;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumnModel;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
 
 import com.uantwerpen.Helpers.DbWriter;
 import com.uantwerpen.Objects.GroupMember;
-import com.uantwerpen.Objects.PaymentGroup;
-import javafx.scene.Group;
 
 public class GroupPanel {
     private JLabel titleLabel;
@@ -24,7 +23,7 @@ public class GroupPanel {
     private JPanel memberPanel;
     private JButton createGroupBtn;
     private JLabel categoryLabel;
-    private JButton addMemberButton;
+    private JButton addMemberBtn;
     private JTextField memberNameTb;
     private JTextField memberEmailTb;
     private JTable memberListTbl;
@@ -32,13 +31,14 @@ public class GroupPanel {
     private JPanel createGroupPanel;
 
     public DefaultTableModel tabelModel;
-    private static String[]  columnNames = {"Name", "Email", "Saldo"};
+    private static String[]  columnNames = {"MemberId","Name", "Email", "Saldo"};
 
     public ArrayList<GroupMember> memberList = new ArrayList<GroupMember>();
 
     private DbWriter dbWriter = new DbWriter();
 
     private JLabel groupIdLbl;
+    private JButton updateMemberBtn;
 
     public GroupPanel() {
         tabelModel = (DefaultTableModel) memberListTbl.getModel();
@@ -53,11 +53,16 @@ public class GroupPanel {
 
         this.memberListTbl.setShowVerticalLines(false);
         this.memberListTbl.setRowHeight(32);
-        this.memberListTbl.getColumnModel().getColumn(0).setPreferredWidth(250);
-        this.memberListTbl.getColumnModel().getColumn(1).setPreferredWidth(350);
-        this.memberListTbl.getColumnModel().getColumn(2).setPreferredWidth(150);
 
-        addMemberButton.addActionListener(new ActionListener() {
+        TableColumnModel tcm = this.memberListTbl.getColumnModel();
+
+        tcm.getColumn(0).setPreferredWidth(0);
+        tcm.getColumn(1).setPreferredWidth(250);
+        tcm.getColumn(2).setPreferredWidth(350);
+        tcm.getColumn(3).setPreferredWidth(150);
+        //tcm.removeColumn(tcm.getColumn(0));
+
+        addMemberBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 if (String.valueOf(groupIdLbl.getText()).isBlank() | String.valueOf(groupIdLbl.getText()).isEmpty()){
@@ -65,11 +70,12 @@ public class GroupPanel {
                     memberNameTb.setText(null);
                     memberEmailTb.setText(null);
                     memberList.add(newMember);
-                    Object[] row = new Object[3];
+                    Object[] row = new Object[4];
 
-                    row[0] = newMember.Name;
-                    row[1] = newMember.Email;
-                    row[2] = newMember.Saldo;
+                    row[0] = newMember.MemberId;
+                    row[1] = newMember.Name;
+                    row[2] = newMember.Email;
+                    row[3] = newMember.Saldo;
 
                     tabelModel.addRow(row);
                 }
@@ -81,14 +87,15 @@ public class GroupPanel {
                     memberNameTb.setText(null);
                     memberEmailTb.setText(null);
 
-                    Object[] row = new Object[3];
-
-                        row[0] = newMember.Name;
-                        row[1] = newMember.Email;
-                        row[2] = newMember.Saldo;
+                    Object[] row = new Object[4];
+                        row[0] = 0;
+                        row[1] = newMember.Name;
+                        row[2] = newMember.Email;
+                        row[3] = newMember.Saldo;
 
                         tabelModel.addRow(row);
                 }
+
             }
         });
 
@@ -118,6 +125,28 @@ public class GroupPanel {
                 }
 
                 new MainApplication().main(null);
+            }
+        });
+        memberListTbl.addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusLost(FocusEvent e) {
+                int updatedMemberId = (int)memberListTbl.getValueAt(memberListTbl.getSelectedRow(), 0);
+                //GroupMember updatedMember = dbWriter.GetGroupMemberByMemberId(updatedMemberId);
+
+                for (GroupMember oldMember: memberList) {
+                    if (oldMember.MemberId == updatedMemberId){
+                        oldMember.Name = (String)memberListTbl.getValueAt(memberListTbl.getSelectedRow(), 1);
+                        oldMember.Email = (String)memberListTbl.getValueAt(memberListTbl.getSelectedRow(), 2);
+                    }
+                }
+                updateMemberBtn.setVisible(true);
+            }
+        });
+        updateMemberBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                dbWriter.UpdateGroupMembers(memberList);
+                groupFrame.dispose();
             }
         });
     }
@@ -152,17 +181,19 @@ public class GroupPanel {
                     memberList = dbWriter.GetMembersByGroupId(groupId);
                     createGroupBtn.setVisible(false);
 
-                    Object[] headerRow = new Object[3];
-                    headerRow[0]="<html><b>Name</b></html>";
-                    headerRow[1]="<html><b>Email</b></html>";
-                    headerRow[2]="<html><b>Saldo (€)</b></html>";
+                    Object[] headerRow = new Object[4];
+                    headerRow[0]="Ids";
+                    headerRow[1]="<html><b>Name</b></html>";
+                    headerRow[2]="<html><b>Email</b></html>";
+                    headerRow[3]="<html><b>Saldo (€)</b></html>";
                     tabelModel.addRow(headerRow);
 
-                    Object[] row = new Object[3];
+                    Object[] row = new Object[4];
                     for (int i=0; i < memberList.size(); i++){
-                        row[0] = memberList.get(i).getName();
-                        row[1] = memberList.get(i).getEmail();
-                        row[2] = memberList.get(i).getSaldo();
+                        row[0] = memberList.get(i).getMemberId();
+                        row[1] = memberList.get(i).getName();
+                        row[2] = memberList.get(i).getEmail();
+                        row[3] = memberList.get(i).getSaldo();
 
                         tabelModel.addRow(row);
                     }

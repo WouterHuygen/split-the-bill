@@ -33,6 +33,7 @@ public class MainApplication {
         mainFrame.setVisible(true);
 
         nw.DisplayGroups(nw.paymentgroupsTbl);
+        nw.paymentgroupsTbl.setDefaultEditor(String.class, null);
     }
 
     public void DisplayGroups(JTable mainTable){
@@ -59,43 +60,9 @@ public class MainApplication {
         TableColumnModel tcm = mainTable.getColumnModel();
         tcm.removeColumn(tcm.getColumn(2));
 
-/*        for (int i = 1; i < paymentgroupsTbl.getRowCount(); i++) {
-            boolean isSettled = (boolean) paymentgroupsTbl.getModel().getValueAt(i, 2);
-            if (isSettled){
-                mainTable.setCellSelectionEnabled(false);
-            }
-        }*/
-        //System.out.println(isSettled);
-
         mainTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         mainTable.getColumnModel().getColumn(0).setMaxWidth(100);
-        //mainTable.getColumn(1).setHeaderValue("yoo");
-        //mainTable.setShowVerticalLines(false);
-        //mainTable = new JTable(createAlternating(model));
     }
-
-    private JComponent createAlternating(DefaultTableModel model)
-    {
-        JTable table = new JTable( model )
-        {
-            public Component prepareRenderer(TableCellRenderer renderer, int row, int column)
-            {
-                Component c = super.prepareRenderer(renderer, row, column);
-
-                //  Alternate row color
-
-                if (!isRowSelected(row))
-                    c.setBackground(row % 2 == 0 ? getBackground() : Color.LIGHT_GRAY);
-
-                return c;
-            }
-        };
-
-        table.setPreferredScrollableViewportSize(table.getPreferredSize());
-        table.changeSelection(0, 0, false, false);
-        return new JScrollPane( table );
-    }
-
 
     public MainApplication() {
         makeGrpBtn.addActionListener(new ActionListener() {
@@ -112,14 +79,16 @@ public class MainApplication {
                     try {
                         int groupId = (int) paymentgroupsTbl.getValueAt(paymentgroupsTbl.getSelectedRow(), 0);
                         boolean isSettled = (boolean) paymentgroupsTbl.getModel().getValueAt(paymentgroupsTbl.getSelectedRow(), 2);
+                        System.out.println(isSettled);
                         if (!isSettled){
                             GroupPanel gp = new GroupPanel();
                             gp.OpenPaymentGroup(groupId);
+                        }else {
+                            JOptionPane.showMessageDialog(null, "This group has already been settled");
                         }
                     }catch (Exception e){
                         System.out.println("error = " + e);
                     }
-
                 }
             }
         });
