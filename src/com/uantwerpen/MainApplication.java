@@ -13,7 +13,7 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 public class MainApplication {
-    private JButton makeGrpBtn;
+    private JButton addPaymentGroupBtn;
     private JPanel mainPanel;
     private JLabel titleLabel;
     private JTable paymentgroupsTbl;
@@ -57,7 +57,7 @@ public class MainApplication {
     }
 
     public MainApplication() {
-        makeGrpBtn.addActionListener(new ActionListener() {
+        addPaymentGroupBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 DbWriter dbWriter = new DbWriter();
