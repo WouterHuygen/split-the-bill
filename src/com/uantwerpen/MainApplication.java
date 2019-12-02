@@ -79,7 +79,6 @@ public class MainApplication {
                     try {
                         int groupId = (int) paymentgroupsTbl.getValueAt(paymentgroupsTbl.getSelectedRow(), 0);
                         boolean isSettled = (boolean) paymentgroupsTbl.getModel().getValueAt(paymentgroupsTbl.getSelectedRow(), 2);
-                        System.out.println(isSettled);
                         if (!isSettled){
                             GroupPanel gp = new GroupPanel();
                             gp.OpenPaymentGroup(groupId);

@@ -12,8 +12,6 @@ import java.util.ArrayList;
 
 
 public class DbWriter {
-    public int newGroupId;
-
     public static String sqlUrl = "jdbc:sqlite:splitthebill.db";
     Connection conn = null;
 
@@ -41,9 +39,6 @@ public class DbWriter {
             pstmt.setString(2, memberToAdd.Email);
             pstmt.setInt(3, memberToAdd.GroupId);
             pstmt.executeUpdate();
-
-            System.out.println("name = " + memberToAdd.Name + ", is added to group" + memberToAdd.GroupId);
-
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -69,23 +64,6 @@ public class DbWriter {
                 System.out.println(e.getMessage());
             }
         }
-
-
-        /*
-
-        try(Connection conn = this.connect();
-            PreparedStatement pstmt = conn.prepareStatement(sqlQuery)) {
-            pstmt.setString(1, memberToAdd.Name);
-            pstmt.setString(2, memberToAdd.Email);
-            pstmt.setInt(3, memberToAdd.GroupId);
-            pstmt.executeUpdate();
-
-            System.out.println("name = " + memberToAdd.Name + ", is added to group" + memberToAdd.GroupId);
-
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }*/
-
     }
 
     //Get members from a groupID
@@ -134,7 +112,6 @@ public class DbWriter {
             ResultSet rs = stmt.executeQuery(sqlQuery)){
                 while (rs.next()){
                     result += rs.getString("groupname") + "\n";
-                    System.out.println(rs.getInt("groupId") + "\t" + rs.getString("groupname"));
                 }
                 return result;
         }catch(SQLException e){
@@ -212,12 +189,23 @@ public class DbWriter {
             pstmt.setString(1, groupName);
 
             ResultSet rs  = pstmt.executeQuery();
-            System.out.println("PaymentGroupID = " + rs.getInt("groupId"));
 
             return rs.getInt("groupId");
         } catch (SQLException e) {
             System.out.println(e.getMessage());
             return 0;
+        }
+    }
+
+    public void DeletePaymentGroup(int groupId){
+        String sqlQuery = "DELETE FROM PAYMENTGROUPS WHERE groupid == ?";
+        try(Connection conn = this.connect();
+            PreparedStatement pstmt = conn.prepareStatement(sqlQuery)) {
+            pstmt.setInt(1, groupId);
+            pstmt.executeUpdate();
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
         }
     }
 
@@ -255,5 +243,6 @@ public class DbWriter {
             System.out.println(e.getMessage());
         }
     }
+
 }
 

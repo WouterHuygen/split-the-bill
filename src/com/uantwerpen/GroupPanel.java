@@ -39,11 +39,12 @@ public class GroupPanel {
 
     private JLabel groupIdLbl;
     private JButton updateMemberBtn;
+    private JButton deletePaymentgroupBtn;
 
     public GroupPanel() {
         tabelModel = (DefaultTableModel) memberListTbl.getModel();
 
-        groupFrame = new JFrame("GroupPanel");
+        //groupFrame = new JFrame("GroupPanel");
         groupFrame.setContentPane(this.createGroupPanel);
         groupFrame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
         groupFrame.pack();
@@ -120,7 +121,6 @@ public class GroupPanel {
                     GroupMember memberToAdd = memberList.get(i);
                     memberToAdd.setGroupId(Integer.parseInt(groupIdLbl.getText()));
                     dbWriter.InsertMember(memberToAdd);
-                    System.out.println("actionEvent = adding member " + memberToAdd.Name + "To " + memberToAdd.GroupId);
                     groupFrame.setVisible(false);
                 }
 
@@ -146,6 +146,13 @@ public class GroupPanel {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 dbWriter.UpdateGroupMembers(memberList);
+                groupFrame.dispose();
+            }
+        });
+        deletePaymentgroupBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                dbWriter.DeletePaymentGroup(Integer.parseInt(groupIdLbl.getText()));
                 groupFrame.dispose();
             }
         });
