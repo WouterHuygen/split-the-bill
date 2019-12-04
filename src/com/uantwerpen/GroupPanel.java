@@ -20,8 +20,8 @@ public class GroupPanel {
     private JRadioButton tripRadioButton;
     private JRadioButton otherRadioButton;
     private JPanel titlePanel;
-    private JPanel generalPanel;
     private JPanel memberPanel;
+    private JPanel generalPanel;
     private JButton createGroupBtn;
     private JLabel categoryLabel;
     private JButton addMemberButton;
@@ -40,7 +40,10 @@ public class GroupPanel {
 
 
     private int numberOfMembers = 0;
-    public JPanel createGroupPanel;
+
+    private JPanel createGroupPanel;
+    public JPanel getCreateGroupPanel() { return createGroupPanel; }
+
 
     public void main(String[] args) {
         JFrame groupFrame = new JFrame("createGroupPanel");

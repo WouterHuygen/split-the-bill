@@ -1,9 +1,7 @@
 package com.uantwerpen.Helpers;
 
-import com.uantwerpen.MainApplication;
 import com.uantwerpen.Objects.PaymentGroup;
 
-import javax.swing.table.DefaultTableModel;
 import java.sql.*;
 import java.util.ArrayList;
 
