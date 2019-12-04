@@ -1,6 +1,7 @@
 package com.uantwerpen;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -11,7 +12,6 @@ public class TransactionPanel {
     private JButton buttonGroups;
 
     public TransactionPanel() {
-
         buttonGroups.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {

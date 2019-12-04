@@ -23,6 +23,7 @@ public class PanelController {
 
     private PanelController(){
         panelAlt.setLayout(cl);
+        panelAlt.setPreferredSize( new Dimension( 900, 600 ) );
 
         /** This section is where you add new panels
          * Each panel gets a panel ID which you manually add **/
