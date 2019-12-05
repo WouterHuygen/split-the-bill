@@ -54,9 +54,10 @@ public class GroupPanel {
         this.memberListTbl.setShowVerticalLines(false);
         this.memberListTbl.setRowHeight(32);
 
-        TableColumnModel tcm = this.memberListTbl.getColumnModel();
+        TableColumnModel tcm = memberListTbl.getColumnModel();
 
-        tcm.getColumn(0).setPreferredWidth(0);
+        tcm.getColumn(0).setMaxWidth(0);
+        tcm.getColumn(0).setWidth(0);
         tcm.getColumn(1).setPreferredWidth(250);
         tcm.getColumn(2).setPreferredWidth(350);
         tcm.getColumn(3).setPreferredWidth(150);
@@ -70,12 +71,13 @@ public class GroupPanel {
                     memberNameTb.setText(null);
                     memberEmailTb.setText(null);
                     memberList.add(newMember);
-                    Object[] row = new Object[4];
+                    Object[] row = new Object[5];
 
                     row[0] = newMember.MemberId;
                     row[1] = newMember.Name;
                     row[2] = newMember.Email;
                     row[3] = newMember.Saldo;
+                    row[4] = "DEL";
 
                     tableModel.addRow(row);
                 }
@@ -87,11 +89,12 @@ public class GroupPanel {
                     memberNameTb.setText(null);
                     memberEmailTb.setText(null);
 
-                    Object[] row = new Object[4];
+                    Object[] row = new Object[5];
                         row[0] = 0;
                         row[1] = newMember.Name;
                         row[2] = newMember.Email;
                         row[3] = newMember.Saldo;
+                        row[4] = "DEL";
 
                         tableModel.addRow(row);
                 }
@@ -128,7 +131,10 @@ public class GroupPanel {
         memberListTbl.addFocusListener(new FocusAdapter() {
             @Override
             public void focusLost(FocusEvent e) {
-                int updatedMemberId = (int)memberListTbl.getValueAt(memberListTbl.getSelectedRow(), 0);
+
+                int updatedMemberId = Integer.parseInt(memberListTbl.getModel().getValueAt(memberListTbl.getSelectedRow(), 0).toString());
+                //boolean isSettled = (boolean) paymentgroupsTbl.getModel().getValueAt(paymentgroupsTbl.getSelectedRow(), 2);
+
                 //GroupMember updatedMember = dbWriter.GetGroupMemberByMemberId(updatedMemberId);
 
                 for (GroupMember oldMember: memberList) {
@@ -200,6 +206,7 @@ public class GroupPanel {
                         row[1] = memberList.get(i).getName();
                         row[2] = memberList.get(i).getEmail();
                         row[3] = memberList.get(i).getSaldo();
+                        row[4] = "DEL";
 
                         tableModel.addRow(row);
                     }

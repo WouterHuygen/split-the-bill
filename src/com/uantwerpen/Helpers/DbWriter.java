@@ -208,6 +208,18 @@ public class DbWriter {
         }
     }
 
+    public void DeleteMember(int memberId){
+        String sqlQuery = "DELETE FROM GROUPMEMBERS WHERE memberid == ?";
+        try(Connection conn = this.connect();
+            PreparedStatement pstmt = conn.prepareStatement(sqlQuery)) {
+            pstmt.setInt(1, memberId);
+            pstmt.executeUpdate();
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
     // Initializes and opens the database
     private void InitializeDatabase(){
         InitializePaymentGroupTable();
