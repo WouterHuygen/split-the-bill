@@ -3,10 +3,10 @@ package com.uantwerpen.Helpers;
 import com.uantwerpen.GroupPanel;
 import com.uantwerpen.MainApplication;
 import com.uantwerpen.Objects.GroupMember;
+
 import com.uantwerpen.Objects.PaymentGroup;
 import javafx.scene.Group;
 
-import javax.swing.table.DefaultTableModel;
 import java.sql.*;
 import java.util.ArrayList;
 
@@ -28,8 +28,7 @@ public class DbWriter {
         return conn;
     }
 
-    //Add new member to a paymentgroup
-    //public void InsertMember(String name, String email, int groupId){
+    /**Add new member to a paymentgroup**/
     public void InsertMember(GroupMember memberToAdd){
         String sqlQuery= "INSERT INTO GROUPMEMBERS(name, email, groupid, saldo) VALUES(?, ?, ?, 0)";
 
