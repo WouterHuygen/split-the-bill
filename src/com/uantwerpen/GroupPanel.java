@@ -27,10 +27,15 @@ public class GroupPanel {
     private JTextField memberNameTb;
     private JTextField memberEmailTb;
     private JTable memberListTbl;
-    public JFrame groupFrame;
+    private JPanel memberListPanel;
+
+    public JPanel getCreateGroupPanel() {
+        return createGroupPanel;
+    }
+
     private JPanel createGroupPanel;
 
-    public DefaultTableModel tabelModel;
+    public DefaultTableModel tableModel;
     private static String[]  columnNames = {"MemberId","Name", "Email", "Saldo"};
 
     public ArrayList<GroupMember> memberList = new ArrayList<GroupMember>();
@@ -39,18 +44,12 @@ public class GroupPanel {
 
     private JLabel groupIdLbl;
     private JButton updateMemberBtn;
-    private JButton deletePaymentgroupBtn;
+    private JButton buttonDeletePaymentGroup;
 
     public GroupPanel() {
-        tabelModel = (DefaultTableModel) memberListTbl.getModel();
+        tableModel = (DefaultTableModel) memberListTbl.getModel();
 
-        //groupFrame = new JFrame("GroupPanel");
-        groupFrame.setContentPane(this.createGroupPanel);
-        groupFrame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-        groupFrame.pack();
-        groupFrame.setVisible(true);
-
-        this.tabelModel.setColumnIdentifiers(columnNames);
+        this.tableModel.setColumnIdentifiers(columnNames);
 
         this.memberListTbl.setShowVerticalLines(false);
         this.memberListTbl.setRowHeight(32);
@@ -78,7 +77,7 @@ public class GroupPanel {
                     row[2] = newMember.Email;
                     row[3] = newMember.Saldo;
 
-                    tabelModel.addRow(row);
+                    tableModel.addRow(row);
                 }
                 else if (memberNameTb.getText() != null & memberEmailTb.getText() != null) {
                     GroupMember newMember = new GroupMember(memberNameTb.getText().trim(), memberEmailTb.getText().trim(), Integer.parseInt(groupIdLbl.getText()), 0);
@@ -94,7 +93,7 @@ public class GroupPanel {
                         row[2] = newMember.Email;
                         row[3] = newMember.Saldo;
 
-                        tabelModel.addRow(row);
+                        tableModel.addRow(row);
                 }
 
             }
@@ -121,10 +120,9 @@ public class GroupPanel {
                     GroupMember memberToAdd = memberList.get(i);
                     memberToAdd.setGroupId(Integer.parseInt(groupIdLbl.getText()));
                     dbWriter.InsertMember(memberToAdd);
-                    groupFrame.setVisible(false);
                 }
-
-                new MainApplication().main(null);
+                /** Hiermee navigeer je naar een panel met ID 1, in dezelfde frame**/
+                PanelController.getInstance().cl.show(PanelController.getInstance().getPanelAlt(), "1");
             }
         });
         memberListTbl.addFocusListener(new FocusAdapter() {
@@ -146,14 +144,15 @@ public class GroupPanel {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 dbWriter.UpdateGroupMembers(memberList);
-                groupFrame.dispose();
             }
         });
-        deletePaymentgroupBtn.addActionListener(new ActionListener() {
+        buttonDeletePaymentGroup.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 dbWriter.DeletePaymentGroup(Integer.parseInt(groupIdLbl.getText()));
-                groupFrame.dispose();
+
+                /** Hiermee navigeer je naar een panel met ID 1, in dezelfde frame **/
+                PanelController.getInstance().cl.show(PanelController.getInstance().getPanelAlt(), "1");
             }
         });
     }
@@ -193,7 +192,7 @@ public class GroupPanel {
                     headerRow[1]="<html><b>Name</b></html>";
                     headerRow[2]="<html><b>Email</b></html>";
                     headerRow[3]="<html><b>Saldo (€)</b></html>";
-                    tabelModel.addRow(headerRow);
+                    tableModel.addRow(headerRow);
 
                     Object[] row = new Object[4];
                     for (int i=0; i < memberList.size(); i++){
@@ -202,7 +201,7 @@ public class GroupPanel {
                         row[2] = memberList.get(i).getEmail();
                         row[3] = memberList.get(i).getSaldo();
 
-                        tabelModel.addRow(row);
+                        tableModel.addRow(row);
                     }
                 } catch (Exception e){
                     e.printStackTrace();

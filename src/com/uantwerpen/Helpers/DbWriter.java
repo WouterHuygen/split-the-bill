@@ -1,11 +1,9 @@
 package com.uantwerpen.Helpers;
 
-<<<<<<< HEAD
-=======
 import com.uantwerpen.GroupPanel;
 import com.uantwerpen.MainApplication;
 import com.uantwerpen.Objects.GroupMember;
->>>>>>> master
+
 import com.uantwerpen.Objects.PaymentGroup;
 import javafx.scene.Group;
 
@@ -30,8 +28,7 @@ public class DbWriter {
         return conn;
     }
 
-    //Add new member to a paymentgroup
-    //public void InsertMember(String name, String email, int groupId){
+    /**Add new member to a paymentgroup**/
     public void InsertMember(GroupMember memberToAdd){
         String sqlQuery= "INSERT INTO GROUPMEMBERS(name, email, groupid, saldo) VALUES(?, ?, ?, 0)";
 
