@@ -26,7 +26,7 @@ public class MenuPanel {
 
         buttonTransaction.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent actionEvent) {
-                PanelController.getInstance().cl.show(PanelController.getInstance().getPanelAlt(), "3");
+                TransactionFrame transactionFrame = new TransactionFrame();
             }
         });
         buttonMakeGroup.addActionListener(new ActionListener() {

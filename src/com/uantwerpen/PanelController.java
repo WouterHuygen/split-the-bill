@@ -10,7 +10,7 @@ public class PanelController {
 
     private static PanelController uniqueInstance;
 
-    private JFrame frame = new JFrame("Split The Bill");
+    private JFrame frameMain = new JFrame("Split The Bill");
     private JPanel panelMain;
     private JLabel titleLabel;
     private JButton buttonMainMenu;
@@ -26,20 +26,22 @@ public class PanelController {
         panelAlt.setPreferredSize( new Dimension( 900, 600 ) );
 
         /** This section is where you add new panels
-         * Each panel gets a panel ID which you manually add **/
+         * Each panel gets a panel ID which you manually add
+         * Only add panels that will be navigated to in the same frame **/
         panelAlt.add(new MenuPanel().getMenuPanel(), "1");
         panelAlt.add(new GroupPanel().getCreateGroupPanel(), "2");
-        panelAlt.add(new TransactionPanel().getTransactionPanel(), "3");
+        //panelAlt.add(new TransactionPanel().getTransactionPanel(), "3");
 
         /** You can navigate to a specify panel using the cl.show() method as shown below
          * Always specify 'panelMain' as the first argument because we added all panels we want to be able to navigate to above
          * Also specify the panel ID **/
         cl.show(panelAlt, "1");
 
-        frame.add(panelMain);
-        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        frame.pack();
-        frame.setVisible(true);
+        frameMain.add(panelMain);
+        frameMain.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frameMain.pack();
+        frameMain.setLocationRelativeTo(null);
+        frameMain.setVisible(true);
 
         buttonMainMenu.addActionListener(new ActionListener() {
             @Override

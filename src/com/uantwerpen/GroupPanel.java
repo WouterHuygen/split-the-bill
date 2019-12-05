@@ -42,6 +42,8 @@ public class GroupPanel {
     private int numberOfMembers = 0;
 
     private JPanel createGroupPanel;
+    private JPanel memberListPanel;
+
     public JPanel getCreateGroupPanel() { return createGroupPanel; }
 
 
