@@ -1,11 +1,10 @@
 package com.uantwerpen;
 
 import javax.swing.*;
-import javax.swing.event.*;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumnModel;
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 
 import com.uantwerpen.Helpers.DbWriter;
@@ -24,63 +23,80 @@ public class GroupPanel {
     private JPanel generalPanel;
     private JButton createGroupBtn;
     private JLabel categoryLabel;
-    private JButton addMemberButton;
+    private JButton addMemberBtn;
     private JTextField memberNameTb;
     private JTextField memberEmailTb;
-    private JTable memberList;
+    private JTable memberListTbl;
     public JFrame groupFrame;
-
-    public ArrayList<GroupMember> newGroupMembers;
-
-    private static String[]  columnNames = {"Name", "Email", "Saldo"};
-    public GroupMember arno = new GroupMember();
-    public GroupMember test = new GroupMember();
-
-    public ArrayList<GroupMember> memberSamples = new ArrayList<GroupMember>();
-
-
-    private int numberOfMembers = 0;
-
     private JPanel createGroupPanel;
-    private JPanel memberListPanel;
 
-    public JPanel getCreateGroupPanel() { return createGroupPanel; }
+    public DefaultTableModel tabelModel;
+    private static String[]  columnNames = {"MemberId","Name", "Email", "Saldo"};
 
+    public ArrayList<GroupMember> memberList = new ArrayList<GroupMember>();
 
-    public void main(String[] args) {
-        JFrame groupFrame = new JFrame("createGroupPanel");
-        groupFrame.setContentPane(new GroupPanel().createGroupPanel);
+    private DbWriter dbWriter = new DbWriter();
 
-        groupFrame.setDefaultCloseOperation(groupFrame.HIDE_ON_CLOSE);
-        groupFrame.pack();
-        groupFrame.setVisible(true);
-    }
+    private JLabel groupIdLbl;
+    private JButton updateMemberBtn;
+    private JButton deletePaymentgroupBtn;
 
     public GroupPanel() {
-        ArrayList<GroupMember> newMemberList = new ArrayList<>();
+        tabelModel = (DefaultTableModel) memberListTbl.getModel();
 
-        DefaultTableModel tableModel = new DefaultTableModel(columnNames, 0);
-        memberList = new JTable(tableModel);
-        Object[] data = {memberNameTb.getText().trim(), memberEmailTb.getText().trim(), groupNameTb.getText().trim()};
-        tableModel.addRow(data);
+        //groupFrame = new JFrame("GroupPanel");
+        groupFrame.setContentPane(this.createGroupPanel);
+        groupFrame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+        groupFrame.pack();
+        groupFrame.setVisible(true);
 
-        addMemberButton.addActionListener(new ActionListener() {
+        this.tabelModel.setColumnIdentifiers(columnNames);
+
+        this.memberListTbl.setShowVerticalLines(false);
+        this.memberListTbl.setRowHeight(32);
+
+        TableColumnModel tcm = this.memberListTbl.getColumnModel();
+
+        tcm.getColumn(0).setPreferredWidth(0);
+        tcm.getColumn(1).setPreferredWidth(250);
+        tcm.getColumn(2).setPreferredWidth(350);
+        tcm.getColumn(3).setPreferredWidth(150);
+        //tcm.removeColumn(tcm.getColumn(0));
+
+        addMemberBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                GroupMember newMember = new GroupMember();
-                newMember.Name = memberNameTb.getText().trim();
-                newMember.Email = memberEmailTb.getText().trim();
-                newMember.Group = groupNameTb.getText().trim();
-
-                if (newMember.Name != null & newMember.Email != null) {
-                    //memberTa.append(newMember + "\n");
-                    tableModel.addRow(data);
-                    newMemberList.add(newMember);
-
-                    numberOfMembers++;
+                if (String.valueOf(groupIdLbl.getText()).isBlank() | String.valueOf(groupIdLbl.getText()).isEmpty()){
+                    GroupMember newMember = new GroupMember(memberNameTb.getText().trim(), memberEmailTb.getText().trim(), 0, 0);
                     memberNameTb.setText(null);
                     memberEmailTb.setText(null);
+                    memberList.add(newMember);
+                    Object[] row = new Object[4];
+
+                    row[0] = newMember.MemberId;
+                    row[1] = newMember.Name;
+                    row[2] = newMember.Email;
+                    row[3] = newMember.Saldo;
+
+                    tabelModel.addRow(row);
                 }
+                else if (memberNameTb.getText() != null & memberEmailTb.getText() != null) {
+                    GroupMember newMember = new GroupMember(memberNameTb.getText().trim(), memberEmailTb.getText().trim(), Integer.parseInt(groupIdLbl.getText()), 0);
+                    newMember.Group = groupNameTb.getText().trim();
+
+                    dbWriter.InsertMember(newMember);
+                    memberNameTb.setText(null);
+                    memberEmailTb.setText(null);
+
+                    Object[] row = new Object[4];
+                        row[0] = 0;
+                        row[1] = newMember.Name;
+                        row[2] = newMember.Email;
+                        row[3] = newMember.Saldo;
+
+                        tabelModel.addRow(row);
+                }
+
             }
         });
 
@@ -90,7 +106,7 @@ public class GroupPanel {
                 super.focusGained(e);
                 String defaultText = "Enter a group";
                 if (groupNameTb.getText().contains(defaultText)){
-                    groupNameTb.setText(null);
+                    //groupNameTb.setText(null);
                 }
             }
         });
@@ -98,11 +114,46 @@ public class GroupPanel {
         createGroupBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                DbWriter dbWriter = new DbWriter();
-                for (int i = 0; i < newMemberList.size(); i++) {
-                    GroupMember userToAdd = newMemberList.get(i);
-                    dbWriter.InsertMember(userToAdd.Name, userToAdd.Email, userToAdd.Group);
+                dbWriter.InsertGroup(groupNameTb.getText().trim());
+                groupIdLbl.setText(String.valueOf(dbWriter.GetPaymentGroupIdByName(groupNameTb.getText().trim())));
+
+                for (int i = 0; i < memberList.size(); i++) {
+                    GroupMember memberToAdd = memberList.get(i);
+                    memberToAdd.setGroupId(Integer.parseInt(groupIdLbl.getText()));
+                    dbWriter.InsertMember(memberToAdd);
+                    groupFrame.setVisible(false);
                 }
+
+                new MainApplication().main(null);
+            }
+        });
+        memberListTbl.addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusLost(FocusEvent e) {
+                int updatedMemberId = (int)memberListTbl.getValueAt(memberListTbl.getSelectedRow(), 0);
+                //GroupMember updatedMember = dbWriter.GetGroupMemberByMemberId(updatedMemberId);
+
+                for (GroupMember oldMember: memberList) {
+                    if (oldMember.MemberId == updatedMemberId){
+                        oldMember.Name = (String)memberListTbl.getValueAt(memberListTbl.getSelectedRow(), 1);
+                        oldMember.Email = (String)memberListTbl.getValueAt(memberListTbl.getSelectedRow(), 2);
+                    }
+                }
+                updateMemberBtn.setVisible(true);
+            }
+        });
+        updateMemberBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                dbWriter.UpdateGroupMembers(memberList);
+                groupFrame.dispose();
+            }
+        });
+        deletePaymentgroupBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                dbWriter.DeletePaymentGroup(Integer.parseInt(groupIdLbl.getText()));
+                groupFrame.dispose();
             }
         });
     }
@@ -112,12 +163,6 @@ public class GroupPanel {
             @Override
             public void run() {
                 try {
-                    GroupPanel nw = new GroupPanel();
-                    JFrame groupFrame = new JFrame("GroupFrame");
-                    groupFrame.setContentPane(nw.createGroupPanel);
-                    groupFrame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-                    groupFrame.pack();
-                    groupFrame.setVisible(true);
 
                 } catch (Exception e){
                     e.printStackTrace();
@@ -126,7 +171,45 @@ public class GroupPanel {
         });
     }
 
+    public void OpenPaymentGroup(int groupId){
+        Font fTitle = new Font(Font.SERIF, Font.BOLD, 36);
 
+        EventQueue.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    groupNameTb.setEditable(false);
+                    groupNameTb.setBackground(Color.white);
+                    String groupName = dbWriter.GetPaymentGroupById(groupId);
+                    groupNameTb.setText(groupName);
+                    groupIdLbl.setText(String.valueOf(groupId));
+                    titleLabel.setText(groupName);
+                    titleLabel.setFont(fTitle);
+                    memberList = dbWriter.GetMembersByGroupId(groupId);
+                    createGroupBtn.setVisible(false);
+
+                    Object[] headerRow = new Object[4];
+                    headerRow[0]="Ids";
+                    headerRow[1]="<html><b>Name</b></html>";
+                    headerRow[2]="<html><b>Email</b></html>";
+                    headerRow[3]="<html><b>Saldo (€)</b></html>";
+                    tabelModel.addRow(headerRow);
+
+                    Object[] row = new Object[4];
+                    for (int i=0; i < memberList.size(); i++){
+                        row[0] = memberList.get(i).getMemberId();
+                        row[1] = memberList.get(i).getName();
+                        row[2] = memberList.get(i).getEmail();
+                        row[3] = memberList.get(i).getSaldo();
+
+                        tabelModel.addRow(row);
+                    }
+                } catch (Exception e){
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
 }
 
 
