@@ -1,69 +1,69 @@
 package com.uantwerpen.Objects;
 
 public class GroupMember {
-    public String Name;
-    public String Email;
-    public String Group;
-    public int GroupId;
-    public int Saldo;
-    public int MemberId;
+    public String name;
+    public String email;
+    public String group;
+    public Integer groupId;
+    public Integer balance;
+    public Integer memberId;
 
-    public GroupMember(String name, String email, int groupId, int saldo) {
-        Name = name;
-        Email = email;
-        GroupId = groupId;
+    public GroupMember(String name, String email, Integer groupId, Integer balance) {
+        this.name = name;
+        this.email = email;
+        this.groupId = groupId;
     }
 
-    public int getMemberId() {
-        return MemberId;
+    public Integer getMemberId() {
+        return memberId;
     }
 
     public void setMemberId(int memberId) {
-        MemberId = memberId;
+        this.memberId = memberId;
     }
 
-    public int getGroupId() {
-        return GroupId;
+    public Integer getGroupId() {
+        return groupId;
     }
 
     public void setGroupId(int groupId) {
-        GroupId = groupId;
+        this.groupId = groupId;
     }
 
     public String getName() {
-        return Name;
+        return name;
     }
 
     public void setName(String Name) {
-        this.Name = Name;
+        this.name = Name;
     }
 
     public String getEmail() {
-        return Email;
+        return email;
     }
 
     public void setEmail(String Email) {
-        this.Email = Email;
+        this.email = Email;
     }
 
     public String getGroup() {
-        return Group;
+        return group;
     }
 
     public void setGroup(String Group) {
-        this.Group = Group;
+        this.group = Group;
     }
 
-    public int getSaldo() {
-        return Saldo;
+    public Integer getBalance() {
+        return balance;
     }
 
-    public void setSaldo(int Saldo) {
-        this.Saldo = Saldo;
+    public void setBalance(int Saldo) {
+        this.balance = Saldo;
     }
 
     public boolean compareTo(GroupMember oldMember, GroupMember newMember){
-        if(oldMember.Name == newMember.Name & oldMember.Email == newMember.Email & oldMember.Saldo == newMember.Saldo)
+        if(oldMember.name == newMember.name & oldMember.email == newMember.email & oldMember.balance == newMember.balance)
             return true;
         else
             return false;

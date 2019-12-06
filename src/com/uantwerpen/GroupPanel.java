@@ -73,17 +73,17 @@ public class GroupPanel {
                     memberList.add(newMember);
                     Object[] row = new Object[5];
 
-                    row[0] = newMember.MemberId;
-                    row[1] = newMember.Name;
-                    row[2] = newMember.Email;
-                    row[3] = newMember.Saldo;
+                    row[0] = newMember.memberId;
+                    row[1] = newMember.name;
+                    row[2] = newMember.email;
+                    row[3] = newMember.balance;
                     row[4] = "DEL";
 
                     tableModel.addRow(row);
                 }
                 else if (memberNameTb.getText() != null & memberEmailTb.getText() != null) {
                     GroupMember newMember = new GroupMember(memberNameTb.getText().trim(), memberEmailTb.getText().trim(), Integer.parseInt(groupIdLbl.getText()), 0);
-                    newMember.Group = groupNameTb.getText().trim();
+                    newMember.group = groupNameTb.getText().trim();
 
                     dbWriter.InsertMember(newMember);
                     memberNameTb.setText(null);
@@ -91,9 +91,9 @@ public class GroupPanel {
 
                     Object[] row = new Object[5];
                         row[0] = 0;
-                        row[1] = newMember.Name;
-                        row[2] = newMember.Email;
-                        row[3] = newMember.Saldo;
+                        row[1] = newMember.name;
+                        row[2] = newMember.email;
+                        row[3] = newMember.balance;
                         row[4] = "DEL";
 
                         tableModel.addRow(row);
@@ -140,9 +140,9 @@ public class GroupPanel {
                 //GroupMember updatedMember = dbWriter.GetGroupMemberByMemberId(updatedMemberId);
 
                 for (GroupMember oldMember: memberList) {
-                    if (oldMember.MemberId == updatedMemberId){
-                        oldMember.Name = (String)memberListTbl.getValueAt(memberListTbl.getSelectedRow(), 1);
-                        oldMember.Email = (String)memberListTbl.getValueAt(memberListTbl.getSelectedRow(), 2);
+                    if (oldMember.memberId == updatedMemberId){
+                        oldMember.name = (String)memberListTbl.getValueAt(memberListTbl.getSelectedRow(), 1);
+                        oldMember.email = (String)memberListTbl.getValueAt(memberListTbl.getSelectedRow(), 2);
                     }
                 }
                 updateMemberBtn.setVisible(true);
@@ -207,7 +207,7 @@ public class GroupPanel {
                         row[0] = memberList.get(i).getMemberId();
                         row[1] = memberList.get(i).getName();
                         row[2] = memberList.get(i).getEmail();
-                        row[3] = memberList.get(i).getSaldo();
+                        row[3] = memberList.get(i).getBalance();
                         row[4] = "DEL";
 
                         tableModel.addRow(row);
