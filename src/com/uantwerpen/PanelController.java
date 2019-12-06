@@ -30,6 +30,8 @@ public class PanelController {
          * Only add panels that will be navigated to in the same frame **/
         panelAlt.add(new MenuPanel().getMenuPanel(), "1");
         panelAlt.add(new GroupPanel().getCreateGroupPanel(), "2");
+        panelAlt.add(new GroupPanel().OpenPaymentGroup(0), "3");
+
         //panelAlt.add(new TransactionPanel().getTransactionPanel(), "3");
 
         /** You can navigate to a specify panel using the cl.show() method as shown below
@@ -49,6 +51,14 @@ public class PanelController {
                 cl.show(panelAlt, "1");
             }
         });
+    }
+
+    public void makeNewGroupPanel(int groupId){
+        try{panelAlt.remove(2);}
+        catch(Exception e){}
+
+        panelAlt.add(new GroupPanel().OpenPaymentGroup(groupId), "3");
+        cl.show(panelAlt, "3");
     }
 
     public static PanelController getInstance(){

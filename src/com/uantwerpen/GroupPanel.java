@@ -124,7 +124,9 @@ public class GroupPanel {
                     memberToAdd.setGroupId(Integer.parseInt(groupIdLbl.getText()));
                     dbWriter.InsertMember(memberToAdd);
                 }
+
                 /** Hiermee navigeer je naar een panel met ID 1, in dezelfde frame**/
+                new MenuPanel().DisplayGroups();
                 PanelController.getInstance().cl.show(PanelController.getInstance().getPanelAlt(), "1");
             }
         });
@@ -176,7 +178,7 @@ public class GroupPanel {
         });
     }
 
-    public void OpenPaymentGroup(int groupId){
+    public JPanel OpenPaymentGroup(int groupId){
         Font fTitle = new Font(Font.SERIF, Font.BOLD, 36);
 
         EventQueue.invokeLater(new Runnable() {
@@ -200,7 +202,7 @@ public class GroupPanel {
                     headerRow[3]="<html><b>Saldo (€)</b></html>";
                     tableModel.addRow(headerRow);
 
-                    Object[] row = new Object[4];
+                    Object[] row = new Object[5];
                     for (int i=0; i < memberList.size(); i++){
                         row[0] = memberList.get(i).getMemberId();
                         row[1] = memberList.get(i).getName();
@@ -215,6 +217,8 @@ public class GroupPanel {
                 }
             }
         });
+
+        return createGroupPanel;
     }
 }
 
