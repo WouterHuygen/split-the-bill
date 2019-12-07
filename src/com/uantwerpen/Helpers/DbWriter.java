@@ -1,11 +1,9 @@
 package com.uantwerpen.Helpers;
 
-import com.uantwerpen.GroupPanel;
-import com.uantwerpen.MainApplication;
 import com.uantwerpen.Objects.GroupMember;
 
 import com.uantwerpen.Objects.PaymentGroup;
-import javafx.scene.Group;
+import com.uantwerpen.Objects.Transaction;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -34,9 +32,9 @@ public class DbWriter {
 
         try(Connection conn = this.connect();
             PreparedStatement pstmt = conn.prepareStatement(sqlQuery)) {
-            pstmt.setString(1, memberToAdd.Name);
-            pstmt.setString(2, memberToAdd.Email);
-            pstmt.setInt(3, memberToAdd.GroupId);
+            pstmt.setString(1, memberToAdd.name);
+            pstmt.setString(2, memberToAdd.email);
+            pstmt.setInt(3, memberToAdd.groupId);
             pstmt.executeUpdate();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -53,9 +51,9 @@ public class DbWriter {
                     + "WHERE memberid = ?";
             try(Connection conn = this.connect();
                 PreparedStatement pstmt = conn.prepareStatement(sqlQuery)) {
-                pstmt.setString(1, toUpdateMember.Name);
-                pstmt.setString(2, toUpdateMember.Email);
-                pstmt.setInt(3, toUpdateMember.MemberId);
+                pstmt.setString(1, toUpdateMember.name);
+                pstmt.setString(2, toUpdateMember.email);
+                pstmt.setInt(3, toUpdateMember.memberId);
 
                 pstmt.executeUpdate();
 
@@ -78,7 +76,7 @@ public class DbWriter {
             ResultSet rs  = pstmt.executeQuery();
             while (rs.next()){
                 GroupMember groupMember = new GroupMember(rs.getString("name"), rs.getString("email"),rs.getInt("groupId"), 0);
-                groupMember.MemberId = rs.getInt("memberId");
+                groupMember.memberId = rs.getInt("memberId");
                 groupMembers.add(groupMember);
             }
             return groupMembers;
@@ -168,8 +166,8 @@ public class DbWriter {
             pstmt.setDouble(1,memberId);
 
             ResultSet rs  = pstmt.executeQuery();
-            GroupMember groupMember = new GroupMember(rs.getString("name"), rs.getString("email"), rs.getInt("groupId"), rs.getInt("saldo"));
-            groupMember.MemberId = rs.getInt("memberid");
+            GroupMember groupMember = new GroupMember(rs.getString("name"), rs.getString("email"), rs.getInt("groupId"), rs.getInt("balance"));
+            groupMember.memberId = rs.getInt("memberId");
             return groupMember;
 
         } catch (SQLException e) {
@@ -208,12 +206,42 @@ public class DbWriter {
         }
     }
 
+    public void DeleteMember(int memberId){
+        String sqlQuery = "DELETE FROM GROUPMEMBERS WHERE memberid == ?";
+        try(Connection conn = this.connect();
+            PreparedStatement pstmt = conn.prepareStatement(sqlQuery)) {
+            pstmt.setInt(1, memberId);
+            pstmt.executeUpdate();
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    /*public void AddTransaction(Transaction transaction){
+        String sqlQuery= "INSERT INTO TRANSACTIONS(paymentgoupid, name, description, payeeid, payerids) VALUES(?, ?, ?, ?, ?)";
+
+        try(Connection conn = this.connect();
+            PreparedStatement pstmt = conn.prepareStatement(sqlQuery)) {
+            pstmt.setInt(1, transaction.getPaymentGroupId());
+            pstmt.setString(2, transaction.getName());
+            pstmt.setDouble(3, transaction.getAmount());
+            pstmt.setString(4, transaction.getDescription());
+            pstmt.setInt(5, transaction.getPayeeId());
+            pstmt.setString(6, transaction.getJoinedPayerIds());
+            pstmt.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }*/
+
     // Initializes and opens the database
     private void InitializeDatabase(){
-        InitializePaymentGroupTable();
+        InitializePaymentGroupsTable();
         InitializeGroupMembersTable();
+        InitializeTransactionsTable();
     }
-    private void InitializePaymentGroupTable(){
+    private void InitializePaymentGroupsTable(){
         String sqlQuery = "CREATE TABLE if NOT EXISTS PAYMENTGROUPS"+
                 "(GROUPID INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL," +
                 " GROUPNAME CHAR(50) NOT NULL," +
@@ -233,7 +261,29 @@ public class DbWriter {
                 " NAME CHAR(50)    NOT NULL," +
                 " EMAIL CHAR(50)    NOT NULL," +
                 " GROUPID INTEGER    NOT NULL," +
+               // " FOREIGN KEY GROUPID REFERENCES PAYMENTGROUPS(GROUPID), " +
                 " SALDO INTEGER NOT NULL);";
+        try(Connection conn = this.connect();
+            PreparedStatement pstmt = conn.prepareStatement(sqlQuery)) {
+            pstmt.executeUpdate();
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    private void InitializeTransactionsTable(){
+        String sqlQuery = "CREATE TABLE if NOT EXISTS TRANSACTIONS"+
+                "(TRANSACTIONID INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                " PAYMENTGROUPID    CHAR(50)        NOT NULL, " +
+               // " FOREIGN KEY PAYMENTGROUPID REFERENCES PAYMENTGROUPS(GROUPID), " +
+                " NAME              CHAR(50)        NOT NULL, " +
+                " AMOUNT            INTEGER         NOT NULL, " +
+                " DESCRIPTION       NVARCHAR(100), " +
+                " PAYEEID           INTEGER         NOT NULL, " +
+                //" PAYEEID INTEGER FOREIGN KEY REFERENCES GROUPMEMBERS(MEMBERID), " +
+                " PAYERIDS          NVARCHAR(100)   NOT NULL," +
+                " DATETIME          TIMESTAMP DEFAULT CURRENT_TIMESTAMP)";
         try(Connection conn = this.connect();
             PreparedStatement pstmt = conn.prepareStatement(sqlQuery)) {
             pstmt.executeUpdate();

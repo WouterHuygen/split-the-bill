@@ -15,18 +15,23 @@ import java.util.ArrayList;
 public class MenuPanel {
 
     private JPanel menuPanel;
-    private JTable paymentGroupsTbl;
     private JButton buttonTransaction;
     private JButton buttonMakeGroup;
     private JButton buttonGroups;
     private JTable tablePaymentGroups;
+    private JButton buttonRefresh;
+
+    DefaultTableModel model;
 
     private JPanel testPanel = new JPanel();
 
     public JPanel getMenuPanel(){ return menuPanel; }
 
     public MenuPanel() {
+        //PanelController panelController = new PanelController();
+        model = (DefaultTableModel) tablePaymentGroups.getModel();
 
+        DisplayGroups();
 
         buttonTransaction.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent actionEvent) {
@@ -36,13 +41,13 @@ public class MenuPanel {
         buttonMakeGroup.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                DisplayGroups(tablePaymentGroups);
+                PanelController.getInstance().cl.show(PanelController.getInstance().getPanelAlt(), "2");
             }
         });
         buttonGroups.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                PanelController.getInstance().cl.show(PanelController.getInstance().getPanelAlt(), "2");
+                PanelController.getInstance().makeNewGroupPanel((int) tablePaymentGroups.getValueAt(tablePaymentGroups.getSelectedRow(), 0));
             }
         });
 
@@ -64,13 +69,22 @@ public class MenuPanel {
                 }
             }
         });
+
+        buttonRefresh.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                System.out.println("test");
+                model.setNumRows(0);
+                model.setColumnCount(0);
+                DisplayGroups();
+            }
+        });
     }
 
-    public void DisplayGroups(JTable mainTable){
+    public void DisplayGroups(){
         DbWriter app = new DbWriter();
 
         ArrayList<PaymentGroup> list = app.GetAllPaymentGroupsB();
-        DefaultTableModel model = (DefaultTableModel) mainTable.getModel();
         model.addColumn("GroupId");
         model.addColumn("GroupName");
         model.addColumn("IsSettled");
@@ -87,10 +101,10 @@ public class MenuPanel {
             model.addRow(row);
         }
 
-        TableColumnModel tcm = mainTable.getColumnModel();
+        TableColumnModel tcm = tablePaymentGroups.getColumnModel();
         tcm.removeColumn(tcm.getColumn(2));
 
-        mainTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-        mainTable.getColumnModel().getColumn(0).setMaxWidth(100);
+        tablePaymentGroups.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        tablePaymentGroups.getColumnModel().getColumn(0).setMaxWidth(100);
     }
 }

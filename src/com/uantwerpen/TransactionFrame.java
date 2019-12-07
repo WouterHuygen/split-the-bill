@@ -1,5 +1,7 @@
 package com.uantwerpen;
 
+import com.uantwerpen.Objects.Transaction;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -35,6 +37,12 @@ public class TransactionFrame{
             public void actionPerformed(ActionEvent actionEvent) {
                 frameTransaction.setVisible(false);
                 frameTransaction.dispose();
+            }
+        });
+        buttonAddTransaction.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+
             }
         });
     }
