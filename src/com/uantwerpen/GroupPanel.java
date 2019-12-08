@@ -1,6 +1,8 @@
 package com.uantwerpen;
 
 import javax.swing.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 import java.awt.*;
@@ -14,15 +16,10 @@ public class GroupPanel {
     private JLabel titleLabel;
     private JTextField groupNameTb;
     private JLabel groupNameLabel;
-    private JRadioButton apartmentRadioButton;
-    private JRadioButton houseRadioButton;
-    private JRadioButton tripRadioButton;
-    private JRadioButton otherRadioButton;
     private JPanel titlePanel;
     private JPanel memberPanel;
     private JPanel generalPanel;
     private JButton createGroupBtn;
-    private JLabel categoryLabel;
     private JButton addMemberBtn;
     private JTextField memberNameTb;
     private JTextField memberEmailTb;
@@ -45,10 +42,12 @@ public class GroupPanel {
     private JLabel groupIdLbl;
     private JButton updateMemberBtn;
     private JButton buttonDeletePaymentGroup;
+    private JLabel emailWarningLbl;
+    private JLabel nameWarningLbl;
 
     public GroupPanel() {
         tableModel = (DefaultTableModel) memberListTbl.getModel();
-
+        buttonDeletePaymentGroup.setVisible(false);
         this.tableModel.setColumnIdentifiers(columnNames);
 
         this.memberListTbl.setShowVerticalLines(false);
@@ -63,40 +62,62 @@ public class GroupPanel {
         tcm.getColumn(3).setPreferredWidth(150);
         //tcm.removeColumn(tcm.getColumn(0));
 
+        Object[] headerRow = new Object[4];
+        headerRow[0]="Ids";
+        headerRow[1]="<html><b>Name</b></html>";
+        headerRow[2]="<html><b>Email</b></html>";
+        headerRow[3]="<html><b>Balance (€)</b></html>";
+        tableModel.addRow(headerRow);
+
+        memberListTbl.removeColumn(memberListTbl.getColumnModel().getColumn(0));
+        memberListTbl.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+
         addMemberBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                if (String.valueOf(groupIdLbl.getText()).isBlank() | String.valueOf(groupIdLbl.getText()).isEmpty()){
-                    GroupMember newMember = new GroupMember(memberNameTb.getText().trim(), memberEmailTb.getText().trim(), 0, 0);
-                    memberNameTb.setText(null);
-                    memberEmailTb.setText(null);
-                    memberList.add(newMember);
-                    Object[] row = new Object[5];
-
-                    row[0] = newMember.memberId;
-                    row[1] = newMember.name;
-                    row[2] = newMember.email;
-                    row[3] = newMember.balance;
-                    row[4] = "DEL";
-
-                    tableModel.addRow(row);
+                String memberEmail = memberEmailTb.getText();
+                String memberName = memberNameTb.getText();
+                nameWarningLbl.setVisible(false);
+                emailWarningLbl.setVisible(false);
+                if (memberName.isBlank()){
+                    nameWarningLbl.setVisible(true);
                 }
-                else if (memberNameTb.getText() != null & memberEmailTb.getText() != null) {
-                    GroupMember newMember = new GroupMember(memberNameTb.getText().trim(), memberEmailTb.getText().trim(), Integer.parseInt(groupIdLbl.getText()), 0);
+                else if(memberEmail.isBlank()){
+                    emailWarningLbl.setVisible(true);
+                }
+                else if (!groupIdLbl.getText().isBlank()) {
+                    GroupMember newMember = new GroupMember(memberName.trim(), memberEmail.trim(), Integer.parseInt(groupIdLbl.getText()), 0);
                     newMember.group = groupNameTb.getText().trim();
 
                     dbWriter.InsertMember(newMember);
+                    GroupMember addedMember = dbWriter.GetGroupMemberByGroupIdAndEmail(Integer.parseInt(groupIdLbl.getText()), memberEmail);
                     memberNameTb.setText(null);
                     memberEmailTb.setText(null);
 
-                    Object[] row = new Object[5];
-                        row[0] = 0;
+                    Object[] row = new Object[4];
+                        row[0] = addedMember.memberId;
                         row[1] = newMember.name;
                         row[2] = newMember.email;
                         row[3] = newMember.balance;
-                        row[4] = "DEL";
 
                         tableModel.addRow(row);
+                }
+                else{
+                    GroupMember newMember = new GroupMember(memberName.trim(), memberEmail.trim(), 0, 0);
+                    newMember.group = groupNameTb.getText().trim();
+                    memberList.add(newMember);
+                    //dbWriter.InsertMember(newMember);
+                    //GroupMember addedMember = dbWriter.GetGroupMemberByGroupIdAndEmail(Integer.parseInt(groupIdLbl.getText()), memberEmail);
+                    memberNameTb.setText(null);
+                    memberEmailTb.setText(null);
+
+                    Object[] row = new Object[4];
+                    row[0] = 0;
+                    row[1] = newMember.name;
+                    row[2] = newMember.email;
+                    row[3] = newMember.balance;
+
+                    tableModel.addRow(row);
                 }
 
             }
@@ -108,7 +129,7 @@ public class GroupPanel {
                 super.focusGained(e);
                 String defaultText = "Enter a group";
                 if (groupNameTb.getText().contains(defaultText)){
-                    //groupNameTb.setText(null);
+                    groupNameTb.setText(null);
                 }
             }
         });
@@ -127,40 +148,54 @@ public class GroupPanel {
 
                 /** Hiermee navigeer je naar een panel met ID 1, in dezelfde frame**/
                 new MenuPanel().DisplayGroups();
-                PanelController.getInstance().cl.show(PanelController.getInstance().getPanelAlt(), "1");
+                PanelController.getInstance().makeMainPanel();
             }
         });
+
         memberListTbl.addFocusListener(new FocusAdapter() {
             @Override
             public void focusLost(FocusEvent e) {
+                try{
+                    int updatedMemberId = (int) memberListTbl.getModel().getValueAt(memberListTbl.getSelectedRow(), 0);
 
-                int updatedMemberId = Integer.parseInt(memberListTbl.getModel().getValueAt(memberListTbl.getSelectedRow(), 0).toString());
-                //boolean isSettled = (boolean) paymentgroupsTbl.getModel().getValueAt(paymentgroupsTbl.getSelectedRow(), 2);
-
-                //GroupMember updatedMember = dbWriter.GetGroupMemberByMemberId(updatedMemberId);
-
-                for (GroupMember oldMember: memberList) {
-                    if (oldMember.memberId == updatedMemberId){
-                        oldMember.name = (String)memberListTbl.getValueAt(memberListTbl.getSelectedRow(), 1);
-                        oldMember.email = (String)memberListTbl.getValueAt(memberListTbl.getSelectedRow(), 2);
+                    for (GroupMember oldMember: memberList) {
+                        if (oldMember.memberId == updatedMemberId){
+                            oldMember.name = (String)memberListTbl.getModel().getValueAt(memberListTbl.getSelectedRow(), 1);
+                            oldMember.email = (String)memberListTbl.getModel().getValueAt(memberListTbl.getSelectedRow(), 2);
+                        }
                     }
-                }
-                updateMemberBtn.setVisible(true);
-            }
+                    updateMemberBtn.setVisible(true);
+            }catch(Exception ex){}}
         });
+
         updateMemberBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 dbWriter.UpdateGroupMembers(memberList);
+                updateMemberBtn.setVisible(false);
             }
         });
+
         buttonDeletePaymentGroup.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 dbWriter.DeletePaymentGroup(Integer.parseInt(groupIdLbl.getText()));
 
                 /** Hiermee navigeer je naar een panel met ID 1, in dezelfde frame **/
-                PanelController.getInstance().cl.show(PanelController.getInstance().getPanelAlt(), "1");
+                PanelController.getInstance().makeMainPanel();
+            }
+        });
+
+        memberListTbl.getSelectionModel().addListSelectionListener(new ListSelectionListener(){
+            public void valueChanged(ListSelectionEvent event) {
+                //memberListTbl.setSelectionBackground(Color.gray);
+                if(!event.getValueIsAdjusting() && memberListTbl.getSelectedRow() != 0) {
+                    try {
+                        System.out.println("row");
+                    }catch (Exception e){
+                        System.out.println("error = " + e);
+                    }
+                }
             }
         });
     }
@@ -180,7 +215,9 @@ public class GroupPanel {
 
     public JPanel OpenPaymentGroup(int groupId){
         Font fTitle = new Font(Font.SERIF, Font.BOLD, 36);
-
+        groupNameTb.setVisible(false);
+        groupNameLabel.setVisible(false);
+        buttonDeletePaymentGroup.setVisible(true);
         EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
@@ -195,23 +232,16 @@ public class GroupPanel {
                     memberList = dbWriter.GetMembersByGroupId(groupId);
                     createGroupBtn.setVisible(false);
 
-                    Object[] headerRow = new Object[4];
-                    headerRow[0]="Ids";
-                    headerRow[1]="<html><b>Name</b></html>";
-                    headerRow[2]="<html><b>Email</b></html>";
-                    headerRow[3]="<html><b>Saldo (€)</b></html>";
-                    tableModel.addRow(headerRow);
-
-                    Object[] row = new Object[5];
+                    Object[] row = new Object[4];
                     for (int i=0; i < memberList.size(); i++){
-                        row[0] = memberList.get(i).getMemberId();
-                        row[1] = memberList.get(i).getName();
-                        row[2] = memberList.get(i).getEmail();
-                        row[3] = memberList.get(i).getBalance();
-                        row[4] = "DEL";
+                        row[0] = memberList.get(i).memberId;
+                        row[1] = memberList.get(i).name;
+                        row[2] = memberList.get(i).email;
+                        row[3] = memberList.get(i).balance;
 
                         tableModel.addRow(row);
                     }
+
                 } catch (Exception e){
                     e.printStackTrace();
                 }

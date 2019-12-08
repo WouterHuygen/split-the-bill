@@ -48,17 +48,29 @@ public class PanelController {
         buttonMainMenu.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                cl.show(panelAlt, "1");
+                makeMainPanel();
             }
         });
     }
 
-    public void makeNewGroupPanel(int groupId){
-        try{panelAlt.remove(2);}
+    public void makeGroupPanel(int groupId){
+        try{
+            panelAlt.remove(2);
+        }
         catch(Exception e){}
 
         panelAlt.add(new GroupPanel().OpenPaymentGroup(groupId), "3");
         cl.show(panelAlt, "3");
+    }
+
+    public void makeCreateGroupPanel(){
+        panelAlt.add(new GroupPanel().getCreateGroupPanel(), "CreateGroupPanel");
+        cl.show(panelAlt, "CreateGroupPanel");
+    }
+
+    public void makeMainPanel(){
+        panelAlt.add(new MenuPanel().getMenuPanel(), "MainPanel");
+        cl.show(panelAlt, "MainPanel");
     }
 
     public static PanelController getInstance(){

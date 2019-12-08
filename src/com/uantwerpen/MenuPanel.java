@@ -8,8 +8,11 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 import java.util.ArrayList;
 
 public class MenuPanel {
@@ -41,25 +44,27 @@ public class MenuPanel {
         buttonMakeGroup.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                PanelController.getInstance().cl.show(PanelController.getInstance().getPanelAlt(), "2");
+                PanelController.getInstance().makeCreateGroupPanel();
             }
         });
         buttonGroups.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                PanelController.getInstance().makeNewGroupPanel((int) tablePaymentGroups.getValueAt(tablePaymentGroups.getSelectedRow(), 0));
+                PanelController.getInstance().makeGroupPanel((int) tablePaymentGroups.getModel().getValueAt(tablePaymentGroups.getSelectedRow(), 0));
             }
         });
 
         tablePaymentGroups.getSelectionModel().addListSelectionListener(new ListSelectionListener(){
             public void valueChanged(ListSelectionEvent event) {
+                //tablePaymentGroups.setSelectionBackground(Color.gray);
                 if(!event.getValueIsAdjusting() && tablePaymentGroups.getSelectedRow() != 0) {
                     try {
-                        int groupId = (int) tablePaymentGroups.getValueAt(tablePaymentGroups.getSelectedRow(), 0);
+                        int groupId = (int) tablePaymentGroups.getModel().getValueAt(tablePaymentGroups.getSelectedRow(), 0);
                         boolean isSettled = (boolean) tablePaymentGroups.getModel().getValueAt(tablePaymentGroups.getSelectedRow(), 2);
                         if (!isSettled){
                             GroupPanel gp = new GroupPanel();
                             gp.OpenPaymentGroup(groupId);
+                            PanelController.getInstance().makeGroupPanel(groupId);
                         }else {
                             JOptionPane.showMessageDialog(null, "This group has already been settled");
                         }
@@ -79,6 +84,12 @@ public class MenuPanel {
                 DisplayGroups();
             }
         });
+        tablePaymentGroups.addFocusListener(new FocusAdapter() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                super.focusGained(e);
+            }
+        });
     }
 
     public void DisplayGroups(){
@@ -89,7 +100,8 @@ public class MenuPanel {
         model.addColumn("GroupName");
         model.addColumn("IsSettled");
         Object[] headerRow = new Object[2];
-        headerRow[0]="<html><b>GroupId</b></html>";
+        //headerRow[0]="<html><b>GroupId</b></html>";
+        headerRow[0]="<html><b>Group ID</b></html>";
         headerRow[1]="<html><b>Paymentgroup name</b></html>";
         model.addRow(headerRow);
 
@@ -103,8 +115,9 @@ public class MenuPanel {
 
         TableColumnModel tcm = tablePaymentGroups.getColumnModel();
         tcm.removeColumn(tcm.getColumn(2));
+        tcm.removeColumn(tcm.getColumn(0));
 
         tablePaymentGroups.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-        tablePaymentGroups.getColumnModel().getColumn(0).setMaxWidth(100);
+        //tablePaymentGroups.getColumnModel().getColumn(0).setMaxWidth(100);
     }
 }

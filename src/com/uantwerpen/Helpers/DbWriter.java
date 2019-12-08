@@ -28,7 +28,7 @@ public class DbWriter {
 
     /**Add new member to a paymentgroup**/
     public void InsertMember(GroupMember memberToAdd){
-        String sqlQuery= "INSERT INTO GROUPMEMBERS(name, email, groupid, saldo) VALUES(?, ?, ?, 0)";
+        String sqlQuery= "INSERT INTO GROUPMEMBERS(name, email, groupid, BALANCE) VALUES(?, ?, ?, 0)";
 
         try(Connection conn = this.connect();
             PreparedStatement pstmt = conn.prepareStatement(sqlQuery)) {
@@ -65,7 +65,7 @@ public class DbWriter {
 
     //Get members from a groupID
     public ArrayList<GroupMember> GetMembersByGroupId(int groupId){
-        String sqlQuery= "SELECT memberId, name, groupid, saldo, email FROM GROUPMEMBERS WHERE groupid == ?";
+        String sqlQuery= "SELECT memberId, name, groupid, balance, email FROM GROUPMEMBERS WHERE groupid == ?";
         String result = "";
         ArrayList<GroupMember> groupMembers = new ArrayList<>();
         try (Connection conn = this.connect();
@@ -157,13 +157,32 @@ public class DbWriter {
         }
     }
 
-    //Get groupname based on ID
+    //Get groupmember based on ID
     public GroupMember GetGroupMemberByMemberId(int memberId){
         String sqlQuery = "SELECT * FROM GROUPMEMBERS WHERE memberid == ?";
         try (Connection conn = this.connect();
              PreparedStatement pstmt  = conn.prepareStatement(sqlQuery)){
 
             pstmt.setDouble(1,memberId);
+
+            ResultSet rs  = pstmt.executeQuery();
+            GroupMember groupMember = new GroupMember(rs.getString("name"), rs.getString("email"), rs.getInt("groupId"), rs.getInt("balance"));
+            groupMember.memberId = rs.getInt("memberId");
+            return groupMember;
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            return null;
+        }
+    }
+
+    //Get groupmember based on groupID and member Email
+    public GroupMember GetGroupMemberByGroupIdAndEmail(int groupId, String email){
+        String sqlQuery = "SELECT * FROM GROUPMEMBERS WHERE GROUPID == groupId AND EMAIL == email";
+        try (Connection conn = this.connect();
+             PreparedStatement pstmt  = conn.prepareStatement(sqlQuery)){
+
+            //pstmt.setDouble(1,memberId);
 
             ResultSet rs  = pstmt.executeQuery();
             GroupMember groupMember = new GroupMember(rs.getString("name"), rs.getString("email"), rs.getInt("groupId"), rs.getInt("balance"));
@@ -262,7 +281,7 @@ public class DbWriter {
                 " EMAIL CHAR(50)    NOT NULL," +
                 " GROUPID INTEGER    NOT NULL," +
                // " FOREIGN KEY GROUPID REFERENCES PAYMENTGROUPS(GROUPID), " +
-                " SALDO INTEGER NOT NULL);";
+                " BALANCE INTEGER NOT NULL);";
         try(Connection conn = this.connect();
             PreparedStatement pstmt = conn.prepareStatement(sqlQuery)) {
             pstmt.executeUpdate();
@@ -271,7 +290,6 @@ public class DbWriter {
             System.out.println(e.getMessage());
         }
     }
-
     private void InitializeTransactionsTable(){
         String sqlQuery = "CREATE TABLE if NOT EXISTS TRANSACTIONS"+
                 "(TRANSACTIONID INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +

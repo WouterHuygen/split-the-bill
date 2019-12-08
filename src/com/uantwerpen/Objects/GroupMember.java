@@ -12,6 +12,7 @@ public class GroupMember {
         this.name = name;
         this.email = email;
         this.groupId = groupId;
+        this.balance = balance;
     }
 
     public Integer getMemberId() {
@@ -58,8 +59,8 @@ public class GroupMember {
         return balance;
     }
 
-    public void setBalance(int Saldo) {
-        this.balance = Saldo;
+    public void setBalance(int Balance) {
+        this.balance = Balance;
     }
 
     public boolean compareTo(GroupMember oldMember, GroupMember newMember){
