@@ -44,6 +44,7 @@ public class GroupPanel {
     private JButton buttonDeletePaymentGroup;
     private JLabel emailWarningLbl;
     private JLabel nameWarningLbl;
+    private JButton deleteMemberBtn;
 
     public GroupPanel() {
         tableModel = (DefaultTableModel) memberListTbl.getModel();
@@ -185,19 +186,20 @@ public class GroupPanel {
                 PanelController.getInstance().makeMainPanel();
             }
         });
-
-        memberListTbl.getSelectionModel().addListSelectionListener(new ListSelectionListener(){
+//Was voor member te verwijderen
+ /*       memberListTbl.getSelectionModel().addListSelectionListener(new ListSelectionListener(){
             public void valueChanged(ListSelectionEvent event) {
-                //memberListTbl.setSelectionBackground(Color.gray);
                 if(!event.getValueIsAdjusting() && memberListTbl.getSelectedRow() != 0) {
                     try {
-                        System.out.println("row");
+                        int memberId = (int)memberListTbl.getModel().getValueAt(memberListTbl.getSelectedRow(), 0);
+                        String memberName = (String)memberListTbl.getModel().getValueAt(memberListTbl.getSelectedRow(), 1);
+                        deleteMemberBtn.setText("Member (" + memberName + ")");
                     }catch (Exception e){
                         System.out.println("error = " + e);
                     }
                 }
             }
-        });
+        });*/
     }
 
     public void NewScreen(){
@@ -215,6 +217,8 @@ public class GroupPanel {
 
     public JPanel OpenPaymentGroup(int groupId){
         Font fTitle = new Font(Font.SERIF, Font.BOLD, 36);
+        String groupName = dbWriter.GetPaymentGroupById(groupId);
+        buttonDeletePaymentGroup.setText("Delete " + groupName);
         groupNameTb.setVisible(false);
         groupNameLabel.setVisible(false);
         buttonDeletePaymentGroup.setVisible(true);
@@ -224,7 +228,6 @@ public class GroupPanel {
                 try {
                     groupNameTb.setEditable(false);
                     groupNameTb.setBackground(Color.white);
-                    String groupName = dbWriter.GetPaymentGroupById(groupId);
                     groupNameTb.setText(groupName);
                     groupIdLbl.setText(String.valueOf(groupId));
                     titleLabel.setText(groupName);
