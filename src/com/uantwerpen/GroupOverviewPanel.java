@@ -27,7 +27,7 @@ public class GroupOverviewPanel {
     private ArrayList<String> transactionNames = new ArrayList<String>();
 
     public GroupOverviewPanel(){
-        transactions = dbWriter.GetTransactionsByGroupId(1);
+        transactions = dbWriter.GetTransactionsByGroupId(PanelController.getInstance().getCurrentGroupId());
 
         for (Transaction t: transactions) {
             System.out.println("Transaction: " + t.getName());
@@ -44,7 +44,7 @@ public class GroupOverviewPanel {
         buttonManageGroup.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                
+                PanelController.getInstance().makeGroupPanel();
             }
         });
     }

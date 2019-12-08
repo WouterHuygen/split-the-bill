@@ -37,7 +37,7 @@ public class AddTransactionFrame {
 
         initTransactionFrame();
 
-        groupMembers = dbWriter.GetMembersByGroupId(1); // ID moet nog dynamisch worden voor de huidige geselcteerde groep
+        groupMembers = dbWriter.GetMembersByGroupId(PanelController.getInstance().getCurrentGroupId());
 
         initComboBox();
         initCheckBoxes();
@@ -72,7 +72,7 @@ public class AddTransactionFrame {
     }
 
     private void addTransaction(){
-        Integer paymentGroupId = 1; // WIP: Is still default value
+        Integer paymentGroupId = PanelController.getInstance().getCurrentGroupId();
         String paymentName = textFieldTransactionName.getText();
         Double amount = (double) (int) spinnerAmount.getValue();
         String paymentDescription = textFieldDescription.getText();
@@ -82,6 +82,9 @@ public class AddTransactionFrame {
 
         Transaction testTransaction = new Transaction(paymentGroupId, paymentName, amount, paymentDescription, payeeId, payerIds);
         dbWriter.InsertTransaction(testTransaction);
+
+        /** Redraw overview to update transaction list **/
+        PanelController.getInstance().makeGroupOverviewPanel(PanelController.getInstance().getCurrentGroupId());
     }
 
     private void initComboBox(){

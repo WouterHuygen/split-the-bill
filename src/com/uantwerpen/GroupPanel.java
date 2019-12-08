@@ -1,8 +1,6 @@
 package com.uantwerpen;
 
 import javax.swing.*;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
 import java.awt.*;
@@ -44,11 +42,12 @@ public class GroupPanel {
     private JButton buttonDeletePaymentGroup;
     private JLabel emailWarningLbl;
     private JLabel nameWarningLbl;
-    private JButton deleteMemberBtn;
+    private JButton buttonBack;
 
     public GroupPanel() {
         tableModel = (DefaultTableModel) memberListTbl.getModel();
         buttonDeletePaymentGroup.setVisible(false);
+        buttonBack.setVisible(false);
         this.tableModel.setColumnIdentifiers(columnNames);
 
         this.memberListTbl.setShowVerticalLines(false);
@@ -182,7 +181,6 @@ public class GroupPanel {
             public void actionPerformed(ActionEvent actionEvent) {
                 dbWriter.DeletePaymentGroup(Integer.parseInt(groupIdLbl.getText()));
 
-                /** Hiermee navigeer je naar een panel met ID 1, in dezelfde frame **/
                 PanelController.getInstance().makeMainPanel();
             }
         });
@@ -200,6 +198,12 @@ public class GroupPanel {
                 }
             }
         });*/
+        buttonBack.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                PanelController.getInstance().makeGroupOverviewPanel(PanelController.getInstance().getCurrentGroupId());
+            }
+        });
     }
 
     public void NewScreen(){
@@ -215,7 +219,8 @@ public class GroupPanel {
         });
     }
 
-    public JPanel OpenPaymentGroup(int groupId){
+
+    public JPanel ManagePaymentGroup(int groupId){
         Font fTitle = new Font(Font.SERIF, Font.BOLD, 36);
         String groupName = dbWriter.GetPaymentGroupById(groupId);
         buttonDeletePaymentGroup.setText("Delete " + groupName);
@@ -234,6 +239,7 @@ public class GroupPanel {
                     titleLabel.setFont(fTitle);
                     memberList = dbWriter.GetMembersByGroupId(groupId);
                     createGroupBtn.setVisible(false);
+                    buttonBack.setVisible(true);
 
                     Object[] row = new Object[4];
                     for (int i=0; i < memberList.size(); i++){

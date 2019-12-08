@@ -17,39 +17,23 @@ import java.util.ArrayList;
 public class MenuPanel {
 
     private JPanel menuPanel;
-    private JButton buttonTransactions;
     private JButton buttonMakeGroup;
-    private JButton buttonGroups;
     private JTable tablePaymentGroups;
     private JButton buttonRefresh;
 
     DefaultTableModel model;
 
-    private JPanel testPanel = new JPanel();
-
     public JPanel getMenuPanel(){ return menuPanel; }
 
     public MenuPanel() {
-        //PanelController panelController = new PanelController();
         model = (DefaultTableModel) tablePaymentGroups.getModel();
 
         DisplayGroups();
 
-        buttonTransactions.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent actionEvent) {
-                PanelController.getInstance().cl.show(PanelController.getInstance().getPanelAlt(), "4");
-            }
-        });
         buttonMakeGroup.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 PanelController.getInstance().makeCreateGroupPanel();
-            }
-        });
-        buttonGroups.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                PanelController.getInstance().makeGroupPanel((int) tablePaymentGroups.getModel().getValueAt(tablePaymentGroups.getSelectedRow(), 0));
             }
         });
 
@@ -61,9 +45,7 @@ public class MenuPanel {
                         int groupId = (int) tablePaymentGroups.getModel().getValueAt(tablePaymentGroups.getSelectedRow(), 0);
                         boolean isSettled = (boolean) tablePaymentGroups.getModel().getValueAt(tablePaymentGroups.getSelectedRow(), 2);
                         if (!isSettled){
-                            GroupPanel gp = new GroupPanel();
-                            gp.OpenPaymentGroup(groupId);
-                            PanelController.getInstance().makeGroupPanel(groupId);
+                            PanelController.getInstance().makeGroupOverviewPanel(groupId);
                         }else {
                             JOptionPane.showMessageDialog(null, "This group has already been settled");
                         }
