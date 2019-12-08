@@ -161,7 +161,7 @@ public class DbWriter {
         }
     }
 
-    /** Get groupname based on ID **/
+    /** Get groupname based on member ID **/
     public GroupMember GetGroupMemberByMemberId(int memberId){
         String sqlQuery = "SELECT * FROM GROUPMEMBERS WHERE memberid == ?";
         try (Connection conn = this.connect();
@@ -283,6 +283,7 @@ public class DbWriter {
             return null;
         }
     }
+
 
     /** Initializes and opens the database **/
     private void InitializeDatabase(){

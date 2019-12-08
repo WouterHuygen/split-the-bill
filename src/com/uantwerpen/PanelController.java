@@ -30,7 +30,7 @@ public class PanelController {
          * Only add panels that will be navigated to in the same frame **/
         panelAlt.add(new MenuPanel().getMenuPanel(), "1");
         panelAlt.add(new GroupPanel().getCreateGroupPanel(), "2");
-        panelAlt.add(new GroupPanel().OpenPaymentGroup(0), "3");
+        panelAlt.add(new GroupPanel().OpenPaymentGroup(1), "3");
 
         //panelAlt.add(new TransactionPanel().getTransactionPanel(), "3");
 
