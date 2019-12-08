@@ -10,7 +10,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
-public class TransactionFrame{
+public class AddTransactionFrame {
 
     private JFrame frameTransaction;
     public JPanel getPanelTransaction() { return panelTransaction; }
@@ -33,7 +33,7 @@ public class TransactionFrame{
 
     private ArrayList<GroupMember> groupMembers = new ArrayList<>();
 
-    public TransactionFrame() {
+    public AddTransactionFrame() {
 
         initTransactionFrame();
 
@@ -76,7 +76,7 @@ public class TransactionFrame{
         String paymentName = textFieldTransactionName.getText();
         Double amount = (double) (int) spinnerAmount.getValue();
         String paymentDescription = textFieldDescription.getText();
-        Integer payeeId = getIdForName((String)comboBoxPayer.getSelectedItem());
+        Integer payeeId = getIdForGroupMemberName((String)comboBoxPayer.getSelectedItem());
         ArrayList<Integer> selectedPayerIds = getCheckedPayerIds();
         Integer[] payerIds = selectedPayerIds.toArray(new Integer[selectedPayerIds.size()]);
 
@@ -97,7 +97,7 @@ public class TransactionFrame{
         }
     }
 
-    private Integer getIdForName(String name){
+    private Integer getIdForGroupMemberName(String name){
         Integer id = null;
         for (GroupMember member: groupMembers) {
             if (member.name == name){
@@ -113,7 +113,7 @@ public class TransactionFrame{
         for (Component c: components) {
             if (c instanceof JCheckBox) {
                 if (((JCheckBox) c).isSelected()){
-                    payerIds.add(getIdForName(((JCheckBox) c).getText()));
+                    payerIds.add(getIdForGroupMemberName(((JCheckBox) c).getText()));
                 }
             }
         }

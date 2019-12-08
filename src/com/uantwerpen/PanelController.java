@@ -31,6 +31,7 @@ public class PanelController {
         panelAlt.add(new MenuPanel().getMenuPanel(), "1");
         panelAlt.add(new GroupPanel().getCreateGroupPanel(), "2");
         panelAlt.add(new GroupPanel().OpenPaymentGroup(1), "3");
+        panelAlt.add(new GroupOverviewPanel().getGroupOverviewPanel(), "4");
 
         //panelAlt.add(new TransactionPanel().getTransactionPanel(), "3");
 

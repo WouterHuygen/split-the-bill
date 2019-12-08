@@ -8,7 +8,6 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumnModel;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
@@ -18,7 +17,7 @@ import java.util.ArrayList;
 public class MenuPanel {
 
     private JPanel menuPanel;
-    private JButton buttonTransaction;
+    private JButton buttonTransactions;
     private JButton buttonMakeGroup;
     private JButton buttonGroups;
     private JTable tablePaymentGroups;
@@ -36,9 +35,9 @@ public class MenuPanel {
 
         DisplayGroups();
 
-        buttonTransaction.addActionListener(new ActionListener() {
+        buttonTransactions.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent actionEvent) {
-                TransactionFrame transactionFrame = new TransactionFrame();
+                PanelController.getInstance().cl.show(PanelController.getInstance().getPanelAlt(), "4");
             }
         });
         buttonMakeGroup.addActionListener(new ActionListener() {
