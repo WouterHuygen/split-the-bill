@@ -1,5 +1,6 @@
 package com.uantwerpen.Objects;
 
+import java.sql.Date;
 import java.sql.Timestamp;
 
 public class Transaction {
@@ -10,22 +11,40 @@ public class Transaction {
     private String description;
     private Integer payeeId;
     private Integer[] payerIds;
-    private Timestamp dateTime;
+    private String joinedPayerIds;
+    private java.util.Date dateTime;
 
-    public Transaction(Integer paymentGroupId, String transactionName, Integer payeeId, Integer[] payerIds) {
+    public Transaction(Integer paymentGroupId, String transactionName, Double amount, Integer payeeId, Integer[] payerIds) {
         this.paymentGroupId = paymentGroupId;
         this.name = transactionName;
+        this.amount = amount;
         this.payeeId = payeeId;
         this.payerIds = payerIds;
+        this.joinedPayerIds = joinPayerIdsAsString(payerIds);
     }
 
-    public Transaction(Integer paymentGroupId, String transactionName, String transactionDescription, Integer payeeId, Integer[] payerIds) {
+    public Transaction(Integer paymentGroupId, String transactionName, Double amount, String transactionDescription, Integer payeeId, Integer[] payerIds) {
         this.paymentGroupId = paymentGroupId;
         this.name = transactionName;
+        this.amount = amount;
         this.description = transactionDescription;
         this.payeeId = payeeId;
         this.payerIds = payerIds;
+        this.joinedPayerIds = joinPayerIdsAsString(payerIds);
     }
+
+    public Transaction(Integer paymentGroupId, String transactionName, Double amount, String transactionDescription, Integer payeeId, Integer[] payerIds, Integer id, java.util.Date dateTime) {
+        this.paymentGroupId = paymentGroupId;
+        this.name = transactionName;
+        this.amount = amount;
+        this.description = transactionDescription;
+        this.payeeId = payeeId;
+        this.payerIds = payerIds;
+        this.joinedPayerIds = joinPayerIdsAsString(payerIds);
+        this.id = id;
+        this.dateTime = dateTime;
+    }
+
 
     /** Getters **/
     public Integer getId() {
@@ -56,14 +75,17 @@ public class Transaction {
         return payerIds;
     }
 
-    public Timestamp getDateTime() {
+    public String getJoinedPayerIds() { return joinedPayerIds; }
+
+    public java.util.Date getDateTime() {
         return dateTime;
     }
 
-    public String getJoinedPayerIds() {
+
+    private String joinPayerIdsAsString(Integer[] payerIds) {
         String joinedPayerIds = "";
         for (Integer payerId: payerIds) {
-            joinedPayerIds += (payerId.toString() + "; ");
+            joinedPayerIds += (payerId.toString() + " ");
         }
         return joinedPayerIds;
     }
