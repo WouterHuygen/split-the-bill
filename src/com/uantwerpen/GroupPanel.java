@@ -86,7 +86,7 @@ public class GroupPanel {
                     emailWarningLbl.setVisible(true);
                 }
                 else if (!groupIdLbl.getText().isBlank()) {
-                    GroupMember newMember = new GroupMember(memberName.trim(), memberEmail.trim(), Integer.parseInt(groupIdLbl.getText()), 0);
+                    GroupMember newMember = new GroupMember(memberName.trim(), memberEmail.trim(), Integer.parseInt(groupIdLbl.getText()), (double) 0);
                     newMember.group = groupNameTb.getText().trim();
 
                     dbWriter.InsertMember(newMember);
@@ -103,7 +103,7 @@ public class GroupPanel {
                         tableModel.addRow(row);
                 }
                 else{
-                    GroupMember newMember = new GroupMember(memberName.trim(), memberEmail.trim(), 0, 0);
+                    GroupMember newMember = new GroupMember(memberName.trim(), memberEmail.trim(), 0, (double)0);
                     newMember.group = groupNameTb.getText().trim();
                     memberList.add(newMember);
                     //dbWriter.InsertMember(newMember);

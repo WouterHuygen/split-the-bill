@@ -39,7 +39,7 @@ public class TransactionDetailsFrame {
 
     private void initLabels(){
         labelTransactionName.setText("Transaction name: " + transaction.getName());
-        labelTransactionAmount.setText("Amount: " + transaction.getAmount());
+        labelTransactionAmount.setText("Amount: € " + transaction.getAmount());
         labelTransactionDescription.setText("Description: " + transaction.getDescription());
         labelTransactionPayee.setText("Payee: " + dbWriter.GetGroupMemberByMemberId(transaction.getPayeeId()).name);
         labelTransactionPayers.setText("Payer(s) ID(s): " + transaction.getJoinedPayerIds());

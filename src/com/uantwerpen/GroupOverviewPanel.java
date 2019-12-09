@@ -1,6 +1,7 @@
 package com.uantwerpen;
 
 import com.uantwerpen.Helpers.DbWriter;
+import com.uantwerpen.Objects.GroupMember;
 import com.uantwerpen.Objects.Transaction;
 
 import javax.swing.*;
@@ -15,6 +16,7 @@ public class GroupOverviewPanel {
     private JButton buttonManageGroup;
     private JButton buttonAddTransaction;
     private JPanel panelTransactionHistory;
+    private JPanel panelMemberBalances;
 
     public JPanel getGroupOverviewPanel() {
         return groupOverviewPanel;
@@ -30,11 +32,11 @@ public class GroupOverviewPanel {
         transactions = dbWriter.GetTransactionsByGroupId(PanelController.getInstance().getCurrentGroupId());
 
         for (Transaction t: transactions) {
-            System.out.println("Transaction: " + t.getName());
             transactionNames.add(t.getName());
         }
 
         initTransactionList();
+        initMemberBalances();
 
         buttonAddTransaction.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent actionEvent) {
@@ -57,6 +59,15 @@ public class GroupOverviewPanel {
         listTransactions.addListSelectionListener(listSelectionListener);
 
         panelTransactionHistory.add(listTransactions);
+    }
+    
+    private void initMemberBalances(){
+        panelMemberBalances.setLayout(new BoxLayout(panelMemberBalances, BoxLayout.PAGE_AXIS));
+        ArrayList<GroupMember> groupMembers = dbWriter.GetMembersByGroupId(PanelController.getInstance().getCurrentGroupId());
+        for (GroupMember m: groupMembers) {
+            JLabel label = new JLabel("Balance of " + m.getName() + ": € " + Math.round(m.getBalance()*100.0)/100.0);
+            panelMemberBalances.add(label);
+        }
     }
 
     private Integer getIdForTransactionName(String name){

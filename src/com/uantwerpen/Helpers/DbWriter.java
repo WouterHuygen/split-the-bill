@@ -69,7 +69,7 @@ public class DbWriter {
 
     //Get members from a groupID
     public ArrayList<GroupMember> GetMembersByGroupId(int groupId){
-        String sqlQuery= "SELECT memberId, name, groupid, balance, email FROM GROUPMEMBERS WHERE groupid == ?";
+        String sqlQuery= "SELECT MEMBERID, NAME, EMAIL, GROUPID, BALANCE FROM GROUPMEMBERS WHERE groupid == ?";
         String result = "";
         ArrayList<GroupMember> groupMembers = new ArrayList<>();
         try (Connection conn = this.connect();
@@ -79,7 +79,7 @@ public class DbWriter {
 
             ResultSet rs  = pstmt.executeQuery();
             while (rs.next()){
-                GroupMember groupMember = new GroupMember(rs.getString("name"), rs.getString("email"),rs.getInt("groupId"), 0);
+                GroupMember groupMember = new GroupMember(rs.getString("name"), rs.getString("email"),rs.getInt("groupId"), rs.getDouble("balance"));
                 groupMember.memberId = rs.getInt("memberId");
                 groupMembers.add(groupMember);
             }
@@ -170,7 +170,7 @@ public class DbWriter {
             pstmt.setDouble(1,memberId);
 
             ResultSet rs  = pstmt.executeQuery();
-            GroupMember groupMember = new GroupMember(rs.getString("name"), rs.getString("email"), rs.getInt("groupId"), rs.getInt("balance"));
+            GroupMember groupMember = new GroupMember(rs.getString("name"), rs.getString("email"), rs.getInt("groupId"), rs.getDouble("balance"));
             groupMember.memberId = rs.getInt("memberId");
             return groupMember;
 
@@ -189,7 +189,7 @@ public class DbWriter {
             //pstmt.setDouble(1,memberId);
 
             ResultSet rs  = pstmt.executeQuery();
-            GroupMember groupMember = new GroupMember(rs.getString("name"), rs.getString("email"), rs.getInt("groupId"), rs.getInt("balance"));
+            GroupMember groupMember = new GroupMember(rs.getString("name"), rs.getString("email"), rs.getInt("groupId"), rs.getDouble("balance"));
             groupMember.memberId = rs.getInt("memberId");
             return groupMember;
 
@@ -319,6 +319,31 @@ public class DbWriter {
         }
     }
 
+    public Double GetBalanceByMemberId(Integer memberId){
+        String sqlQuery = "SELECT BALANCE FROM GROUPMEMBERS WHERE MEMBERID == ?";
+        try (Connection conn = this.connect();
+             PreparedStatement pstmt  = conn.prepareStatement(sqlQuery)){
+            pstmt.setInt(1, memberId);
+            ResultSet rs  = pstmt.executeQuery();
+            return rs.getDouble("BALANCE");
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            return null;
+        }
+    }
+
+    public void UpdateMemberBalanceById(Double amountToAdd, Integer memberId){
+            String sqlQuery= "UPDATE GROUPMEMBERS SET BALANCE = ? WHERE MEMBERID = ?";
+            try(Connection conn = this.connect();
+                PreparedStatement pstmt = conn.prepareStatement(sqlQuery)) {
+                pstmt.setDouble(1, GetBalanceByMemberId(memberId) + amountToAdd);
+                pstmt.setInt(2, memberId);
+                pstmt.executeUpdate();
+            } catch (SQLException e) {
+                System.out.println(e.getMessage());
+            }
+        }
+
 
     /** Initializes and opens the database **/
     private void InitializeDatabase(){
@@ -347,7 +372,7 @@ public class DbWriter {
                 " EMAIL CHAR(50)    NOT NULL," +
                 " GROUPID INTEGER    NOT NULL," +
                // " FOREIGN KEY GROUPID REFERENCES PAYMENTGROUPS(GROUPID), " +
-                " BALANCE INTEGER NOT NULL);";
+                " BALANCE DOUBLE NOT NULL);";
         try(Connection conn = this.connect();
             PreparedStatement pstmt = conn.prepareStatement(sqlQuery)) {
             pstmt.executeUpdate();

@@ -83,6 +83,9 @@ public class AddTransactionFrame {
         Transaction testTransaction = new Transaction(paymentGroupId, paymentName, amount, paymentDescription, payeeId, payerIds);
         dbWriter.InsertTransaction(testTransaction);
 
+        splitTransactionEvenly(payerIds, amount);
+        addAmountToPayeeBalance(payeeId, amount);
+
         /** Redraw overview to update transaction list **/
         PanelController.getInstance().makeGroupOverviewPanel(PanelController.getInstance().getCurrentGroupId());
     }
@@ -121,5 +124,15 @@ public class AddTransactionFrame {
             }
         }
         return payerIds;
+    }
+
+    private void splitTransactionEvenly(Integer[]payerIds, Double amountToSplit){
+        Double amountToPay = amountToSplit / payerIds.length;
+        for (Integer id: payerIds) {
+            dbWriter.UpdateMemberBalanceById(-amountToPay, id);
+        }
+    }
+    private void addAmountToPayeeBalance(Integer payeeId, Double amountToReceive){
+        dbWriter.UpdateMemberBalanceById(amountToReceive, payeeId);
     }
 }

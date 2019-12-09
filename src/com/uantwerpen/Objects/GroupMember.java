@@ -5,10 +5,10 @@ public class GroupMember {
     public String email;
     public String group;
     public Integer groupId;
-    public Integer balance;
+    public Double balance;
     public Integer memberId;
 
-    public GroupMember(String name, String email, Integer groupId, Integer balance) {
+    public GroupMember(String name, String email, Integer groupId, Double balance) {
         this.name = name;
         this.email = email;
         this.groupId = groupId;
@@ -55,11 +55,11 @@ public class GroupMember {
         this.group = Group;
     }
 
-    public Integer getBalance() {
+    public Double getBalance() {
         return balance;
     }
 
-    public void setBalance(int Balance) {
+    public void setBalance(Double Balance) {
         this.balance = Balance;
     }
 
