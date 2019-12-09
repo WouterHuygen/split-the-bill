@@ -1,7 +1,8 @@
 package com.uantwerpen;
 
-import com.uantwerpen.Helpers.DbWriter;
-import com.uantwerpen.Objects.PaymentGroup;
+import com.uantwerpen.Controllers.DbWriter;
+import com.uantwerpen.Controllers.PaymentGroupController;
+import com.uantwerpen.Models.PaymentGroup;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionEvent;
@@ -21,6 +22,7 @@ public class MenuPanel {
     private JTable tablePaymentGroups;
     private JButton buttonRefresh;
 
+    PaymentGroupController pgc = new PaymentGroupController();
     DefaultTableModel model;
 
     public JPanel getMenuPanel(){ return menuPanel; }
@@ -75,9 +77,7 @@ public class MenuPanel {
     }
 
     public void DisplayGroups(){
-        DbWriter app = new DbWriter();
-
-        ArrayList<PaymentGroup> list = app.GetAllPaymentGroupsB();
+        ArrayList<PaymentGroup> list = pgc.GetAllPaymentGroupsB();
         model.addColumn("GroupId");
         model.addColumn("GroupName");
         model.addColumn("IsSettled");

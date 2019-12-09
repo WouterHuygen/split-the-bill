@@ -1,7 +1,4 @@
-package com.uantwerpen.Objects;
-
-import java.sql.Date;
-import java.sql.Timestamp;
+package com.uantwerpen.Models;
 
 public class Transaction {
     private Integer id;

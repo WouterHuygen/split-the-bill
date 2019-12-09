@@ -1,7 +1,9 @@
 package com.uantwerpen;
 
-import com.uantwerpen.Helpers.DbWriter;
-import com.uantwerpen.Objects.Transaction;
+import com.uantwerpen.Controllers.DbWriter;
+import com.uantwerpen.Controllers.GroupMemberController;
+import com.uantwerpen.Controllers.TransactionController;
+import com.uantwerpen.Models.Transaction;
 
 import javax.swing.*;
 import java.awt.*;
@@ -17,12 +19,15 @@ public class TransactionDetailsFrame {
     private JLabel labelTransactionPayers;
     private JLabel labelTransactionDate;
 
-    private DbWriter dbWriter = new DbWriter();
+    String payeeNamesString="";
+
+    private TransactionController tc = new TransactionController();
+    private GroupMemberController gmc = new GroupMemberController();
 
     private Transaction transaction;
 
     public TransactionDetailsFrame(Integer transactionId) {
-        transaction = dbWriter.GetTransactionById(transactionId);
+        transaction = tc.GetTransactionById(transactionId);
         initTransactionFrame();
         initLabels();
     }
@@ -41,8 +46,17 @@ public class TransactionDetailsFrame {
         labelTransactionName.setText("Transaction name: " + transaction.getName());
         labelTransactionAmount.setText("Amount: € " + transaction.getAmount());
         labelTransactionDescription.setText("Description: " + transaction.getDescription());
-        labelTransactionPayee.setText("Payee: " + dbWriter.GetGroupMemberByMemberId(transaction.getPayeeId()).name);
-        labelTransactionPayers.setText("Payer(s) ID(s): " + transaction.getJoinedPayerIds());
+        labelTransactionPayee.setText("Paid by: " + gmc.GetGroupMemberByMemberId(transaction.getPayeeId()).name);
+        labelTransactionPayers.setText("Paid for: " + paidForNames(transaction.getPayerIds()));
         labelTransactionDate.setText("Transaction date: " + transaction.getDateTime());
+    }
+
+    private String paidForNames(Integer[] payeeIds){
+        payeeNamesString ="";
+        for (int memberId :
+                payeeIds) {
+            payeeNamesString += gmc.GetGroupMemberByMemberId(memberId).name +", ";
+        }
+        return payeeNamesString;
     }
 }

@@ -1,9 +1,12 @@
 package com.uantwerpen;
 
-import com.uantwerpen.Helpers.DbWriter;
-import com.uantwerpen.Objects.GroupMember;
-import com.uantwerpen.Objects.PaymentGroup;
-import com.uantwerpen.Objects.Transaction;
+import com.uantwerpen.Controllers.DbWriter;
+import com.uantwerpen.Controllers.GroupMemberController;
+import com.uantwerpen.Controllers.PaymentGroupController;
+import com.uantwerpen.Controllers.TransactionController;
+import com.uantwerpen.Models.GroupMember;
+import com.uantwerpen.Models.PaymentGroup;
+import com.uantwerpen.Models.Transaction;
 
 import javax.swing.*;
 import javax.swing.event.ListSelectionListener;
@@ -27,7 +30,9 @@ public class GroupOverviewPanel {
         return groupOverviewPanel;
     }
 
-    private DbWriter dbWriter = new DbWriter();
+    private TransactionController tc = new TransactionController();
+    private PaymentGroupController pgc = new PaymentGroupController();
+    private GroupMemberController gmc = new GroupMemberController();
 
     private ArrayList<Transaction> transactions = new ArrayList<Transaction>();
 
@@ -39,8 +44,8 @@ public class GroupOverviewPanel {
 
 
     public GroupOverviewPanel(){
-        transactions = dbWriter.GetTransactionsByGroupId(PanelController.getInstance().getCurrentGroupId());
-        PaymentGroup currentPaymentGroup = dbWriter.GetGroupByGroupId(PanelController.getInstance().getCurrentGroupId());
+        transactions = tc.GetTransactionsByGroupId(PanelController.getInstance().getCurrentGroupId());
+        PaymentGroup currentPaymentGroup = pgc.GetGroupByGroupId(PanelController.getInstance().getCurrentGroupId());
         if (currentPaymentGroup.isSettled()){
             buttonAddTransaction.setVisible(false);
             buttonManageGroup.setVisible(false);
@@ -69,7 +74,7 @@ public class GroupOverviewPanel {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 int groupId = PanelController.getInstance().getCurrentGroupId();
-                dbWriter.SettleGroupByGroupId(groupId);
+                pgc.SettleGroupByGroupId(groupId);
                 getPaymentOverview();
                 JOptionPane.showMessageDialog(null, "Group is being settled, the following balances are still open: " + "\n" + settleText);
                 PanelController.getInstance().makeMainPanel();
@@ -90,7 +95,7 @@ public class GroupOverviewPanel {
         positiveMembers.clear();
         memberList.clear();
         
-        memberList = dbWriter.GetMembersByGroupId(PanelController.getInstance().getCurrentGroupId());
+        memberList = gmc.GetMembersByGroupId(PanelController.getInstance().getCurrentGroupId());
         for (GroupMember gm :
                 memberList) {
             if (gm.balance == 0.0) continue;
@@ -113,6 +118,10 @@ public class GroupOverviewPanel {
                     settleText += (negativeMember.name + " owes " + positiveMember.name + " €" + (double)Math.round(Math.abs(negativeMember.balance)) + "\n");
                     negativeMember.balance = 0.0;
                     positiveMember.balance += negativeMember.balance;
+                }else if(Math.abs(negativeMember.balance) == positiveMember.balance){
+                    settleText += (negativeMember.name + " owes " + positiveMember.name + " €" + (double)Math.round(Math.abs(negativeMember.balance)) + "\n");
+                    negativeMember.balance = 0.0;
+                    positiveMember.balance = 0.0;
                 }
             }
         }
@@ -130,7 +139,7 @@ public class GroupOverviewPanel {
     
     private void initMemberBalances(){
         panelMemberBalances.setLayout(new BoxLayout(panelMemberBalances, BoxLayout.PAGE_AXIS));
-        ArrayList<GroupMember> groupMembers = dbWriter.GetMembersByGroupId(PanelController.getInstance().getCurrentGroupId());
+        ArrayList<GroupMember> groupMembers = gmc.GetMembersByGroupId(PanelController.getInstance().getCurrentGroupId());
         for (GroupMember m: groupMembers) {
             JLabel label = new JLabel("Balance of " + m.getName() + ": € " + Math.round(m.getBalance()*100.0)/100.0);
             panelMemberBalances.add(label);

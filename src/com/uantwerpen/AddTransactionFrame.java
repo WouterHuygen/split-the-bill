@@ -1,8 +1,10 @@
 package com.uantwerpen;
 
-import com.uantwerpen.Helpers.DbWriter;
-import com.uantwerpen.Objects.GroupMember;
-import com.uantwerpen.Objects.Transaction;
+import com.uantwerpen.Controllers.DbWriter;
+import com.uantwerpen.Controllers.GroupMemberController;
+import com.uantwerpen.Controllers.TransactionController;
+import com.uantwerpen.Models.GroupMember;
+import com.uantwerpen.Models.Transaction;
 
 import javax.swing.*;
 import java.awt.*;
@@ -29,7 +31,8 @@ public class AddTransactionFrame {
     private JPanel panelMiddle1;
     private JPanel panelCheckBoxes;
 
-    private DbWriter dbWriter = new DbWriter();
+    private GroupMemberController gmc = new GroupMemberController();
+    private TransactionController tc = new TransactionController();
 
     private ArrayList<GroupMember> groupMembers = new ArrayList<>();
 
@@ -37,7 +40,7 @@ public class AddTransactionFrame {
 
         initTransactionFrame();
 
-        groupMembers = dbWriter.GetMembersByGroupId(PanelController.getInstance().getCurrentGroupId());
+        groupMembers = gmc.GetMembersByGroupId(PanelController.getInstance().getCurrentGroupId());
 
         initComboBox();
         initCheckBoxes();
@@ -81,7 +84,7 @@ public class AddTransactionFrame {
         Integer[] payerIds = selectedPayerIds.toArray(new Integer[selectedPayerIds.size()]);
 
         Transaction testTransaction = new Transaction(paymentGroupId, paymentName, amount, paymentDescription, payeeId, payerIds);
-        dbWriter.InsertTransaction(testTransaction);
+        tc.InsertTransaction(testTransaction);
 
         splitTransactionEvenly(payerIds, amount);
         addAmountToPayeeBalance(payeeId, amount);
@@ -129,10 +132,10 @@ public class AddTransactionFrame {
     private void splitTransactionEvenly(Integer[]payerIds, Double amountToSplit){
         Double amountToPay = amountToSplit / payerIds.length;
         for (Integer id: payerIds) {
-            dbWriter.UpdateMemberBalanceById(-amountToPay, id);
+            gmc.UpdateMemberBalanceById(-amountToPay, id);
         }
     }
     private void addAmountToPayeeBalance(Integer payeeId, Double amountToReceive){
-        dbWriter.UpdateMemberBalanceById(amountToReceive, payeeId);
+        gmc.UpdateMemberBalanceById(amountToReceive, payeeId);
     }
 }

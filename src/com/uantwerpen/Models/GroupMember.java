@@ -1,4 +1,4 @@
-package com.uantwerpen.Objects;
+package com.uantwerpen.Models;
 
 public class GroupMember {
     public String name;

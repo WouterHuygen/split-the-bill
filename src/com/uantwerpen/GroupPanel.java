@@ -7,8 +7,10 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
 
-import com.uantwerpen.Helpers.DbWriter;
-import com.uantwerpen.Objects.GroupMember;
+import com.uantwerpen.Controllers.DbWriter;
+import com.uantwerpen.Controllers.GroupMemberController;
+import com.uantwerpen.Controllers.PaymentGroupController;
+import com.uantwerpen.Models.GroupMember;
 
 public class GroupPanel {
     private JLabel titleLabel;
@@ -35,7 +37,8 @@ public class GroupPanel {
 
     public ArrayList<GroupMember> memberList = new ArrayList<GroupMember>();
 
-    private DbWriter dbWriter = new DbWriter();
+    private GroupMemberController gmc = new GroupMemberController();
+    private PaymentGroupController pgc = new PaymentGroupController();
 
     private JLabel groupIdLbl;
     private JButton updateMemberBtn;
@@ -65,8 +68,8 @@ public class GroupPanel {
                     GroupMember newMember = new GroupMember(memberName.trim(), memberEmail.trim(), Integer.parseInt(groupIdLbl.getText()), (double) 0);
                     newMember.group = groupNameTb.getText().trim();
 
-                    dbWriter.InsertMember(newMember);
-                    GroupMember addedMember = dbWriter.GetGroupMemberByGroupIdAndEmail(Integer.parseInt(groupIdLbl.getText()), memberEmail);
+                    gmc.InsertMember(newMember);
+                    GroupMember addedMember = gmc.GetGroupMemberByGroupIdAndEmail(Integer.parseInt(groupIdLbl.getText()), memberEmail);
                     memberNameTb.setText(null);
                     memberEmailTb.setText(null);
 
@@ -94,7 +97,6 @@ public class GroupPanel {
 
                     tableModel.addRow(row);
                 }
-
             }
         });
 
@@ -113,13 +115,13 @@ public class GroupPanel {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 if (isValidGroupCheck()) {
-                    dbWriter.InsertGroup(groupNameTb.getText().trim());
-                    groupIdLbl.setText(String.valueOf(dbWriter.GetPaymentGroupIdByName(groupNameTb.getText().trim())));
+                    pgc.InsertGroup(groupNameTb.getText().trim());
+                    groupIdLbl.setText(String.valueOf(pgc.GetPaymentGroupIdByName(groupNameTb.getText().trim())));
 
                     for (int i = 0; i < memberList.size(); i++) {
                         GroupMember memberToAdd = memberList.get(i);
                         memberToAdd.setGroupId(Integer.parseInt(groupIdLbl.getText()));
-                        dbWriter.InsertMember(memberToAdd);
+                        gmc.InsertMember(memberToAdd);
                     }
 
 
@@ -148,7 +150,7 @@ public class GroupPanel {
         updateMemberBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                dbWriter.UpdateGroupMembers(memberList);
+                gmc.UpdateGroupMembers(memberList);
                 updateMemberBtn.setVisible(false);
             }
         });
@@ -156,42 +158,16 @@ public class GroupPanel {
         buttonDeletePaymentGroup.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                dbWriter.DeletePaymentGroup(Integer.parseInt(groupIdLbl.getText()));
+                pgc.DeletePaymentGroup(Integer.parseInt(groupIdLbl.getText()));
 
                 PanelController.getInstance().makeMainPanel();
             }
         });
-//Was voor member te verwijderen
- /*       memberListTbl.getSelectionModel().addListSelectionListener(new ListSelectionListener(){
-            public void valueChanged(ListSelectionEvent event) {
-                if(!event.getValueIsAdjusting() && memberListTbl.getSelectedRow() != 0) {
-                    try {
-                        int memberId = (int)memberListTbl.getModel().getValueAt(memberListTbl.getSelectedRow(), 0);
-                        String memberName = (String)memberListTbl.getModel().getValueAt(memberListTbl.getSelectedRow(), 1);
-                        deleteMemberBtn.setText("Member (" + memberName + ")");
-                    }catch (Exception e){
-                        System.out.println("error = " + e);
-                    }
-                }
-            }
-        });*/
+
         buttonBack.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 PanelController.getInstance().makeGroupOverviewPanel(PanelController.getInstance().getCurrentGroupId());
-            }
-        });
-    }
-
-    public void newScreen(){
-        EventQueue.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                try {
-
-                } catch (Exception e){
-                    e.printStackTrace();
-                }
             }
         });
     }
@@ -227,7 +203,7 @@ public class GroupPanel {
 
     public JPanel managePaymentGroup(int groupId){
         Font fTitle = new Font(Font.SERIF, Font.BOLD, 36);
-        String groupName = dbWriter.GetPaymentGroupById(groupId);
+        String groupName = pgc.GetPaymentGroupById(groupId);
         buttonDeletePaymentGroup.setText("Delete " + groupName);
         groupNameTb.setVisible(false);
         groupNameLabel.setVisible(false);
@@ -242,7 +218,7 @@ public class GroupPanel {
                     groupIdLbl.setText(String.valueOf(groupId));
                     titleLabel.setText(groupName);
                     titleLabel.setFont(fTitle);
-                    memberList = dbWriter.GetMembersByGroupId(groupId);
+                    memberList = gmc.GetMembersByGroupId(groupId);
                     createGroupBtn.setVisible(false);
                     buttonBack.setVisible(true);
 

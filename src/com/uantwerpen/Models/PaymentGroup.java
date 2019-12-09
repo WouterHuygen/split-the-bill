@@ -1,4 +1,4 @@
-package com.uantwerpen.Objects;
+package com.uantwerpen.Models;
 
 public class PaymentGroup {
     //ArrayList<GroupMember> Members;
