@@ -63,10 +63,7 @@ public class GroupMember {
         this.balance = Balance;
     }
 
-    public boolean compareTo(GroupMember oldMember, GroupMember newMember){
-        if(oldMember.name == newMember.name & oldMember.email == newMember.email & oldMember.balance == newMember.balance)
-            return true;
-        else
-            return false;
+    public int compareTo(GroupMember b){
+        return this.balance.compareTo(b.balance);
     }
 }

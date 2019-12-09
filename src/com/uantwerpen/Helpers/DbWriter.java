@@ -104,6 +104,18 @@ public class DbWriter {
         }
     }
 
+    public void SettleGroupByGroupId(int currentGroupId){
+        String sqlQuery = "UPDATE PAYMENTGROUPS SET issettled = 1 WHERE GROUPID = ?";
+
+        try(Connection conn = this.connect();
+            PreparedStatement pstmt = conn.prepareStatement(sqlQuery)){
+            pstmt.setInt(1, currentGroupId);
+            pstmt.executeUpdate();
+        }catch ( SQLException e){
+            System.out.println(e.getMessage());
+        }
+    }
+
     //Returns all groups
     public String GetAllPaymentGroups(){
         String sqlQuery= "SELECT groupId, groupname FROM PAYMENTGROUPS";
@@ -154,6 +166,23 @@ public class DbWriter {
             ResultSet rs  = pstmt.executeQuery();
             System.out.println("PaymentGroup = " + rs.getString("groupname"));
             return rs.getString("groupname");
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            return null;
+        }
+    }
+
+    public PaymentGroup GetGroupByGroupId(int groupId){
+        String sqlQuery = "SELECT * FROM PAYMENTGROUPS WHERE groupId == ?";
+        try (Connection conn = this.connect();
+             PreparedStatement pstmt  = conn.prepareStatement(sqlQuery)){
+
+            pstmt.setDouble(1,groupId);
+
+            ResultSet rs  = pstmt.executeQuery();
+            PaymentGroup paymentGroup = new PaymentGroup(rs.getInt("groupId"), rs.getString("groupname"), rs.getBoolean("issettled"));
+            return paymentGroup;
 
         } catch (SQLException e) {
             System.out.println(e.getMessage());

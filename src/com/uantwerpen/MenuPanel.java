@@ -47,7 +47,8 @@ public class MenuPanel {
                         if (!isSettled){
                             PanelController.getInstance().makeGroupOverviewPanel(groupId);
                         }else {
-                            JOptionPane.showMessageDialog(null, "This group has already been settled");
+                            JOptionPane.showMessageDialog(null, "This group has already been settled and you will not be able to make any changes to this group.");
+                            PanelController.getInstance().makeGroupOverviewPanel(groupId);
                         }
                     }catch (Exception e){
                         System.out.println("error = " + e);
