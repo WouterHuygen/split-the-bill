@@ -43,34 +43,10 @@ public class GroupPanel {
     private JLabel emailWarningLbl;
     private JLabel nameWarningLbl;
     private JButton buttonBack;
+    private JLabel groupWarningLbl;
 
     public GroupPanel() {
-        tableModel = (DefaultTableModel) memberListTbl.getModel();
-        buttonDeletePaymentGroup.setVisible(false);
-        buttonBack.setVisible(false);
-        this.tableModel.setColumnIdentifiers(columnNames);
-
-        this.memberListTbl.setShowVerticalLines(false);
-        this.memberListTbl.setRowHeight(32);
-
-        TableColumnModel tcm = memberListTbl.getColumnModel();
-
-        tcm.getColumn(0).setMaxWidth(0);
-        tcm.getColumn(0).setWidth(0);
-        tcm.getColumn(1).setPreferredWidth(250);
-        tcm.getColumn(2).setPreferredWidth(350);
-        tcm.getColumn(3).setPreferredWidth(150);
-        //tcm.removeColumn(tcm.getColumn(0));
-
-        Object[] headerRow = new Object[4];
-        headerRow[0]="Ids";
-        headerRow[1]="<html><b>Name</b></html>";
-        headerRow[2]="<html><b>Email</b></html>";
-        headerRow[3]="<html><b>Balance (€)</b></html>";
-        tableModel.addRow(headerRow);
-
-        memberListTbl.removeColumn(memberListTbl.getColumnModel().getColumn(0));
-        memberListTbl.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        groupPanelInitialize();
 
         addMemberBtn.addActionListener(new ActionListener() {
             @Override
@@ -106,8 +82,7 @@ public class GroupPanel {
                     GroupMember newMember = new GroupMember(memberName.trim(), memberEmail.trim(), 0, 0);
                     newMember.group = groupNameTb.getText().trim();
                     memberList.add(newMember);
-                    //dbWriter.InsertMember(newMember);
-                    //GroupMember addedMember = dbWriter.GetGroupMemberByGroupIdAndEmail(Integer.parseInt(groupIdLbl.getText()), memberEmail);
+
                     memberNameTb.setText(null);
                     memberEmailTb.setText(null);
 
@@ -137,18 +112,20 @@ public class GroupPanel {
         createGroupBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                dbWriter.InsertGroup(groupNameTb.getText().trim());
-                groupIdLbl.setText(String.valueOf(dbWriter.GetPaymentGroupIdByName(groupNameTb.getText().trim())));
+                if (isValidGroupCheck()) {
+                    dbWriter.InsertGroup(groupNameTb.getText().trim());
+                    groupIdLbl.setText(String.valueOf(dbWriter.GetPaymentGroupIdByName(groupNameTb.getText().trim())));
 
-                for (int i = 0; i < memberList.size(); i++) {
-                    GroupMember memberToAdd = memberList.get(i);
-                    memberToAdd.setGroupId(Integer.parseInt(groupIdLbl.getText()));
-                    dbWriter.InsertMember(memberToAdd);
+                    for (int i = 0; i < memberList.size(); i++) {
+                        GroupMember memberToAdd = memberList.get(i);
+                        memberToAdd.setGroupId(Integer.parseInt(groupIdLbl.getText()));
+                        dbWriter.InsertMember(memberToAdd);
+                    }
+
+
+                    new MenuPanel().DisplayGroups();
+                    PanelController.getInstance().makeMainPanel();
                 }
-
-                /** Hiermee navigeer je naar een panel met ID 1, in dezelfde frame**/
-                new MenuPanel().DisplayGroups();
-                PanelController.getInstance().makeMainPanel();
             }
         });
 
@@ -206,7 +183,7 @@ public class GroupPanel {
         });
     }
 
-    public void NewScreen(){
+    public void newScreen(){
         EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
@@ -219,8 +196,36 @@ public class GroupPanel {
         });
     }
 
+    public void groupPanelInitialize(){
+        tableModel = (DefaultTableModel) memberListTbl.getModel();
+        buttonDeletePaymentGroup.setVisible(false);
+        buttonBack.setVisible(false);
+        this.tableModel.setColumnIdentifiers(columnNames);
 
-    public JPanel ManagePaymentGroup(int groupId){
+        this.memberListTbl.setShowVerticalLines(false);
+        this.memberListTbl.setRowHeight(32);
+
+        TableColumnModel tcm = memberListTbl.getColumnModel();
+
+        tcm.getColumn(0).setMaxWidth(0);
+        tcm.getColumn(0).setWidth(0);
+        tcm.getColumn(1).setPreferredWidth(250);
+        tcm.getColumn(2).setPreferredWidth(350);
+        tcm.getColumn(3).setPreferredWidth(150);
+        //tcm.removeColumn(tcm.getColumn(0));
+
+        Object[] headerRow = new Object[4];
+        headerRow[0]="Ids";
+        headerRow[1]="<html><b>Name</b></html>";
+        headerRow[2]="<html><b>Email</b></html>";
+        headerRow[3]="<html><b>Balance (€)</b></html>";
+        tableModel.addRow(headerRow);
+
+        memberListTbl.removeColumn(memberListTbl.getColumnModel().getColumn(0));
+        memberListTbl.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+    }
+
+    public JPanel managePaymentGroup(int groupId){
         Font fTitle = new Font(Font.SERIF, Font.BOLD, 36);
         String groupName = dbWriter.GetPaymentGroupById(groupId);
         buttonDeletePaymentGroup.setText("Delete " + groupName);
@@ -258,6 +263,17 @@ public class GroupPanel {
         });
 
         return createGroupPanel;
+    }
+
+    public boolean isValidGroupCheck (){
+        if (groupNameTb.getText().isBlank() | groupNameTb.getText().contains("Enter a group name")){
+            groupWarningLbl.setText("Please enter a valid group name.");
+            return false;
+        }else if (memberList.isEmpty()){
+            groupWarningLbl.setText("Please add atleast 1 person to this group.");
+            return false;
+        }
+        else return true;
     }
 }
 
