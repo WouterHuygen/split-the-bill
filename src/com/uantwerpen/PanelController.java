@@ -50,7 +50,7 @@ public class PanelController {
     }
 
     public void makeGroupPanel(){
-        panelAlt.add(new GroupPanel().ManagePaymentGroup(currentGroupId), "GroupPanel");
+        panelAlt.add(new GroupPanel().managePaymentGroup(currentGroupId), "GroupPanel");
         cl.show(panelAlt, "GroupPanel");
     }
 
