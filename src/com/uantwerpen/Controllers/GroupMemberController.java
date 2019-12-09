@@ -151,4 +151,16 @@ public class GroupMemberController {
             System.out.println(e.getMessage());
         }
     }
+
+    public void DeleteAllMembersFromGroup(Integer groupId){
+        String sqlQuery = "DELETE FROM GROUPMEMBERS WHERE GROUPID == ?";
+        try(Connection conn = this.connect();
+            PreparedStatement pstmt = conn.prepareStatement(sqlQuery)) {
+            pstmt.setInt(1, groupId);
+            pstmt.executeUpdate();
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
 }

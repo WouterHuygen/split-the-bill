@@ -23,6 +23,7 @@ public class GroupOverviewPanel {
     private JPanel panelMemberBalances;
     private JButton buttonSettleGroup;
     private JButton buttonPaymentOverview;
+    private JButton buttonDeletePaymentGroup;
 
     private String settleText;
 
@@ -46,10 +47,14 @@ public class GroupOverviewPanel {
     public GroupOverviewPanel(){
         transactions = tc.GetTransactionsByGroupId(PanelController.getInstance().getCurrentGroupId());
         PaymentGroup currentPaymentGroup = pgc.GetGroupByGroupId(PanelController.getInstance().getCurrentGroupId());
+
+        buttonDeletePaymentGroup.setVisible(false);
+
         if (currentPaymentGroup.isSettled()){
             buttonAddTransaction.setVisible(false);
             buttonManageGroup.setVisible(false);
             buttonSettleGroup.setVisible(false);
+            buttonDeletePaymentGroup.setVisible(true);
         }
 
         for (Transaction t: transactions) {
@@ -85,6 +90,15 @@ public class GroupOverviewPanel {
             public void actionPerformed(ActionEvent actionEvent) {
                 getPaymentOverview();
                 JOptionPane.showMessageDialog(null, settleText);
+            }
+        });
+        buttonDeletePaymentGroup.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                pgc.DeletePaymentGroup(PanelController.getInstance().getCurrentGroupId());
+                gmc.DeleteAllMembersFromGroup(PanelController.getInstance().getCurrentGroupId());
+                tc.DeleteAllTransactionsFromGroup(PanelController.getInstance().getCurrentGroupId());
+                PanelController.getInstance().makeMainPanel();
             }
         });
     }

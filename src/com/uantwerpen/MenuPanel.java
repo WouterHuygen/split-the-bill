@@ -87,13 +87,16 @@ public class MenuPanel {
         headerRow[1]="<html><b>Paymentgroup name</b></html>";
         model.addRow(headerRow);
 
-        Object[] row = new Object[3];
-        for (int i=0; i<list.size(); i++){
-            row[0]=list.get(i).getPaymentGroupId();
-            row[1]=list.get(i).getPaymentGroupName();
-            row[2]=list.get(i).isSettled();
-            model.addRow(row);
+        if (list != null){
+            Object[] row = new Object[3];
+            for (int i=0; i<list.size(); i++){
+                row[0]=list.get(i).getPaymentGroupId();
+                row[1]=list.get(i).getPaymentGroupName();
+                row[2]=list.get(i).isSettled();
+                model.addRow(row);
+            }
         }
+
 
         TableColumnModel tcm = tablePaymentGroups.getColumnModel();
         tcm.removeColumn(tcm.getColumn(2));

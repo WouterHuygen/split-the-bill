@@ -32,12 +32,8 @@ public class DbWriter {
 
 
 
-
-
-
-
     /** Initializes and opens the database **/
-    private void InitializeDatabase(){
+    public void InitializeDatabase(){
         InitializePaymentGroupsTable();
         InitializeGroupMembersTable();
         InitializeTransactionsTable();

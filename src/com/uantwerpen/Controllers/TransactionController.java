@@ -99,6 +99,19 @@ public class TransactionController {
         }
     }
 
+    public void DeleteAllTransactionsFromGroup(Integer groupId){
+        String sqlQuery = "DELETE FROM TRANSACTIONS WHERE PAYMENTGROUPID == ?";
+        try(Connection conn = this.connect();
+            PreparedStatement pstmt = conn.prepareStatement(sqlQuery)) {
+            pstmt.setInt(1, groupId);
+            pstmt.executeUpdate();
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+
     /** Casts date string to a java date **/
     private java.util.Date convertStringToDate(String dateToConvert){
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");

@@ -1,5 +1,7 @@
 package com.uantwerpen;
 
+import com.uantwerpen.Controllers.DbWriter;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -25,6 +27,9 @@ public class PanelController {
 
 
     private PanelController(){
+        DbWriter dbWriter = new DbWriter();
+        dbWriter.InitializeDatabase();
+
         panelAlt.setLayout(cl);
         panelAlt.setPreferredSize( new Dimension( 900, 600 ) );
 

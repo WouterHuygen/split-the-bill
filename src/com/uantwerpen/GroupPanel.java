@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import com.uantwerpen.Controllers.DbWriter;
 import com.uantwerpen.Controllers.GroupMemberController;
 import com.uantwerpen.Controllers.PaymentGroupController;
+import com.uantwerpen.Controllers.TransactionController;
 import com.uantwerpen.Models.GroupMember;
 
 public class GroupPanel {
@@ -37,6 +38,7 @@ public class GroupPanel {
 
     public ArrayList<GroupMember> memberList = new ArrayList<GroupMember>();
 
+    private TransactionController tc = new TransactionController();
     private GroupMemberController gmc = new GroupMemberController();
     private PaymentGroupController pgc = new PaymentGroupController();
 
@@ -158,8 +160,9 @@ public class GroupPanel {
         buttonDeletePaymentGroup.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                pgc.DeletePaymentGroup(Integer.parseInt(groupIdLbl.getText()));
-
+                pgc.DeletePaymentGroup(PanelController.getInstance().getCurrentGroupId());
+                gmc.DeleteAllMembersFromGroup(PanelController.getInstance().getCurrentGroupId());
+                tc.DeleteAllTransactionsFromGroup(PanelController.getInstance().getCurrentGroupId());
                 PanelController.getInstance().makeMainPanel();
             }
         });
