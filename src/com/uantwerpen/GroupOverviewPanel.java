@@ -89,7 +89,7 @@ public class GroupOverviewPanel {
         });
     }
 
-    public void getPaymentOverview(){
+    private void getPaymentOverview(){
         settleText = "";
         negativeMembers.clear();
         positiveMembers.clear();
@@ -111,11 +111,11 @@ public class GroupOverviewPanel {
                 if(positiveMember.balance == 0.0) continue;
                 else if (Math.abs(negativeMember.balance) > positiveMember.balance){
                     negativeMember.balance += positiveMember.balance;
-                    settleText += (negativeMembers.get(i).name + " owes " + positiveMember.name + " €" + (double)Math.round(positiveMember.balance) + "\n");
+                    settleText += (negativeMembers.get(i).name + " owes " + positiveMember.name + " €" + (double)Math.round(positiveMember.balance*100.0)/100.0 + "\n");
                     positiveMember.balance = 0.0;
 
                 }else if(Math.abs(negativeMember.balance) < positiveMember.balance){
-                    settleText += (negativeMember.name + " owes " + positiveMember.name + " €" + (double)Math.round(Math.abs(negativeMember.balance)) + "\n");
+                    settleText += (negativeMember.name + " owes " + positiveMember.name + " €" + (double)Math.round(Math.abs(negativeMember.balance)*100.0)/100.0 + "\n");
                     negativeMember.balance = 0.0;
                     positiveMember.balance += negativeMember.balance;
                 }else if(Math.abs(negativeMember.balance) == positiveMember.balance){
